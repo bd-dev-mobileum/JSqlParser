@@ -1,13 +1,6 @@
 # JSqlParser
 
-[![Flattr](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=wumpz&url=http%3A%2F%2Fgithub.com%2FJSQLParser%2FJSqlParser)  [![PayPal donate button](http://img.shields.io/paypal/donate.png?color=yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=64CCN9JJANZXA "Help this JSqlParser version using Paypal")  
-
 Look here for more information and examples: https://github.com/JSQLParser/JSqlParser/wiki.
-
-## License
-
-JSqlParser is licensed under the **LGPL V2.1**.
-
 
 ## News
 
@@ -31,24 +24,6 @@ To help JSqlParsers development you are encouraged to provide
 Also I would like to know about needed examples or documentation stuff. 
 
 ## Extensions in the latest SNAPSHOT version 0.9.2
-
-* first support for user variables
-
-```sql
-SELECT @col FROM table1
-```
-
-* support for within group expressions, e.g. oracls LISTAGG function
-
-```sql
-SELECT LISTAGG(col1, '##') WITHIN GROUP (ORDER BY col1) FROM table1
-```
-
-* support for inner with statements 
-
-```sql
-SELECT * FROM (WITH actor AS (SELECT 'a' aid FROM DUAL) SELECT aid FROM actor)
-```
 
 * support for Oracle collections 
 

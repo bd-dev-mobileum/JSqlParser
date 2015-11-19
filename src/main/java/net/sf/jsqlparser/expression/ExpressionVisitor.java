@@ -5,8 +5,8 @@
  * Copyright (C) 2004 - 2013 JSQLParser
  * %%
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as 
- * published by the Free Software Foundation, either version 2.1 of the 
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful,
@@ -14,7 +14,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
  * 
- * You should have received a copy of the GNU General Lesser Public 
+ * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
@@ -44,112 +44,116 @@ import net.sf.jsqlparser.expression.operators.relational.Matches;
 import net.sf.jsqlparser.expression.operators.relational.MinorThan;
 import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
 import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
+import net.sf.jsqlparser.expression.operators.relational.RangeOperators;
 import net.sf.jsqlparser.expression.operators.relational.RegExpMatchOperator;
 import net.sf.jsqlparser.expression.operators.relational.RegExpMySQLOperator;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SubSelect;
 
-public interface ExpressionVisitor {
+public interface ExpressionVisitor<R, C>
+{
 
-	void visit(NullValue nullValue);
+    R visit(NullValue nullValue, C context);
 
-	void visit(Function function);
+    R visit(BooleanValue booleanValue, C context);
 
-	void visit(SignedExpression signedExpression);
-
-	void visit(JdbcParameter jdbcParameter);
-
-    void visit(JdbcNamedParameter jdbcNamedParameter);
-
-	void visit(DoubleValue doubleValue);
-
-	void visit(LongValue longValue);
-
-	void visit(DateValue dateValue);
-
-	void visit(TimeValue timeValue);
-
-	void visit(TimestampValue timestampValue);
-
-	void visit(Parenthesis parenthesis);
-
-	void visit(StringValue stringValue);
-
-	void visit(Addition addition);
-
-	void visit(Division division);
-
-	void visit(Multiplication multiplication);
-
-	void visit(Subtraction subtraction);
-
-	void visit(AndExpression andExpression);
-
-	void visit(OrExpression orExpression);
-
-	void visit(Between between);
-
-	void visit(EqualsTo equalsTo);
-
-	void visit(GreaterThan greaterThan);
-
-	void visit(GreaterThanEquals greaterThanEquals);
-
-	void visit(InExpression inExpression);
-
-	void visit(IsNullExpression isNullExpression);
-
-	void visit(LikeExpression likeExpression);
-
-	void visit(MinorThan minorThan);
-
-	void visit(MinorThanEquals minorThanEquals);
-
-	void visit(NotEqualsTo notEqualsTo);
-
-	void visit(Column tableColumn);
-
-	void visit(SubSelect subSelect);
-
-	void visit(CaseExpression caseExpression);
-
-	void visit(WhenClause whenClause);
-
-	void visit(ExistsExpression existsExpression);
-
-	void visit(AllComparisonExpression allComparisonExpression);
-
-	void visit(AnyComparisonExpression anyComparisonExpression);
-
-	void visit(Concat concat);
-
-	void visit(Matches matches);
-
-	void visit(BitwiseAnd bitwiseAnd);
-
-	void visit(BitwiseOr bitwiseOr);
-
-	void visit(BitwiseXor bitwiseXor);
-
-	void visit(CastExpression cast);
-
-	void visit(Modulo modulo);
-
-	void visit(AnalyticExpression aexpr);
+    R visit(ObjectValue booleanValue, C context);
     
-    void visit(WithinGroupExpression wgexpr);
+    R visit(Function function, C context);
 
-	void visit(ExtractExpression eexpr);
+    R visit(SignedExpression signedExpression, C context);
 
-	void visit(IntervalExpression iexpr);
+    R visit(JdbcParameter jdbcParameter, C context);
 
-	void visit(OracleHierarchicalExpression oexpr);
+    R visit(JdbcNamedParameter jdbcNamedParameter, C context);
 
-	void visit(RegExpMatchOperator rexpr);
-    
-    void visit(JsonExpression jsonExpr);
+    R visit(DoubleValue doubleValue, C context);
 
-	void visit(RegExpMySQLOperator regExpMySQLOperator);
-    
-    void visit(UserVariable var);
+    R visit(LongValue longValue, C context);
+
+    R visit(DateValue dateValue, C context);
+
+    R visit(TimeValue timeValue, C context);
+
+    R visit(TimestampValue timestampValue, C context);
+
+    R visit(Parenthesis parenthesis, C context);
+
+    R visit(StringValue stringValue, C context);
+
+    R visit(Addition addition, C context);
+
+    R visit(Division division, C context);
+
+    R visit(Multiplication multiplication, C context);
+
+    R visit(Subtraction subtraction, C context);
+
+    R visit(AndExpression andExpression, C context);
+
+    R visit(OrExpression orExpression, C context);
+
+    R visit(Between between, C context);
+
+    R visit(EqualsTo equalsTo, C context);
+
+    R visit(GreaterThan greaterThan, C context);
+
+    R visit(GreaterThanEquals greaterThanEquals, C context);
+
+    R visit(InExpression inExpression, C context);
+
+    R visit(IsNullExpression isNullExpression, C context);
+
+    R visit(LikeExpression likeExpression, C context);
+
+    R visit(MinorThan minorThan, C context);
+
+    R visit(MinorThanEquals minorThanEquals, C context);
+
+    R visit(NotEqualsTo notEqualsTo, C context);
+
+    R visit(Column tableColumn, C context);
+
+    R visit(SubSelect subSelect, C context);
+
+    R visit(CaseExpression caseExpression, C context);
+
+    R visit(WhenClause whenClause, C context);
+
+    R visit(ExistsExpression existsExpression, C context);
+
+    R visit(AllComparisonExpression allComparisonExpression, C context);
+
+    R visit(AnyComparisonExpression anyComparisonExpression, C context);
+
+    R visit(Concat concat, C context);
+
+    R visit(Matches matches, C context);
+
+    R visit(BitwiseAnd bitwiseAnd, C context);
+
+    R visit(BitwiseOr bitwiseOr, C context);
+
+    R visit(BitwiseXor bitwiseXor, C context);
+
+    R visit(CastExpression cast, C context);
+
+    R visit(Modulo modulo, C context);
+
+    R visit(AnalyticExpression aexpr, C context);
+
+    R visit(ExtractExpression eexpr, C context);
+
+    R visit(IntervalExpression iexpr, C context);
+
+    R visit(OracleHierarchicalExpression oexpr, C context);
+
+    R visit(RegExpMatchOperator rexpr, C context);
+
+    R visit(JsonExpression jsonExpr, C context);
+
+    R visit(RegExpMySQLOperator regExpMySQLOperator, C context);
+
+    R visit(RangeOperators rangeOperators, C context);
 }

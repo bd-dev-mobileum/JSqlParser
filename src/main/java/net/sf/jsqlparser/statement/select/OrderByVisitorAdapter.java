@@ -21,9 +21,9 @@
  */
 package net.sf.jsqlparser.statement.select;
 
-public class OrderByVisitorAdapter implements OrderByVisitor {
+public class OrderByVisitorAdapter<R,C> implements OrderByVisitor<R,C> {
     @Override
-    public void visit(OrderByElement orderBy) {
-
+    public R visit(OrderByElement orderBy,C context) {
+        return null;
     }
 }

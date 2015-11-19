@@ -34,9 +34,9 @@ public class Drop implements Statement {
 	private List<String> parameters;
 
 	@Override
-	public void accept(StatementVisitor statementVisitor) {
-		statementVisitor.visit(this);
-	}
+	public <R,C> R accept(StatementVisitor<R,C> statementVisitor,C context) {
+        return statementVisitor.visit(this,context);
+    }
 
 	public String getName() {
 		return name;

@@ -56,8 +56,8 @@ public class SelectExpressionItem implements SelectItem {
 	}
 
 	@Override
-	public void accept(SelectItemVisitor selectItemVisitor) {
-		selectItemVisitor.visit(this);
+    public <R, C> R accept(SelectItemVisitor<R,C> selectItemVisitor,C context){
+        return selectItemVisitor.visit(this,context);
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectVisitorAdapter;
+
 import org.junit.Test;
 
 import java.util.Stack;
@@ -29,35 +30,38 @@ public class AdaptersTest {
         Statement stmnt = CCJSqlParserUtil.parse(sql);
 
         final Stack<Pair<String, String>> params = new Stack<Pair<String, String>>();
-        stmnt.accept(new StatementVisitorAdapter() {
+        stmnt.accept(new StatementVisitorAdapter<Void,Void>() {
             @Override
-            public void visit(Select select) {
-                select.getSelectBody().accept(new SelectVisitorAdapter() {
+            public Void visit(Select select,Void v) {
+               return select.getSelectBody().accept(new SelectVisitorAdapter<Void,Void>() {
                     @Override
-                    public void visit(PlainSelect plainSelect) {
-                        plainSelect.getWhere().accept(new ExpressionVisitorAdapter() {
+                    public Void visit(PlainSelect plainSelect,Void v) {
+                        return plainSelect.getWhere().accept(new ExpressionVisitorAdapter<Void,Void>() {
                             @Override
-                            protected void visitBinaryExpression(BinaryExpression expr) {
+                            protected Void visitBinaryExpression(BinaryExpression expr,Void v) {
                                 if (!(expr instanceof AndExpression)) {
                                     params.push(new Pair<String, String>(null, null));
                                 }
-                                super.visitBinaryExpression(expr);
+                                super.visitBinaryExpression(expr,v);
+                                return null;
                             }
 
                             @Override
-                            public void visit(Column column) {
+                            public Void visit(Column column,Void v) {
                                 params.push(new Pair<String, String>(column.getColumnName(), params.pop().getRight()));
+                                return null;
                             }
 
                             @Override
-                            public void visit(JdbcNamedParameter parameter) {
+                            public Void visit(JdbcNamedParameter parameter,Void v) {
                                 params.push(new Pair<String, String>(params.pop().getLeft(), parameter.getName()));
+                                return null;
                             }
-                        });
+                        },v);
                     }
-                });
+                },v);
             }
-        });
+        },null);
 
         assertEquals(2, params.size());
         Pair<String, String> param2 = params.pop();

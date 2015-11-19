@@ -21,10 +21,10 @@
  */
 package net.sf.jsqlparser.statement.select;
 
-public interface PivotVisitor {
+public interface PivotVisitor<R,C> {
 
-    void visit(Pivot pivot);
+    R visit(Pivot pivot,C context);
 
-    void visit(PivotXml pivot);
+    R visit(PivotXml pivot,C context);
 
 }

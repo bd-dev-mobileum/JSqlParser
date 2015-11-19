@@ -40,8 +40,8 @@ public class SetOperationList implements SelectBody {
 	private Fetch fetch;
 
 	@Override
-	public void accept(SelectVisitor selectVisitor) {
-		selectVisitor.visit(this);
+    public <R, C> R accept(SelectVisitor<R,C> selectVisitor,C context){
+        return selectVisitor.visit(this,context);
 	}
 
 	public List<OrderByElement> getOrderByElements() {

@@ -39,8 +39,8 @@ public class Statements {
         this.statements = statements;
     }
 
-    public void accept(StatementVisitor statementVisitor) {
-        statementVisitor.visit(this);
+    public <R,C> R accept(StatementVisitor<R,C> statementVisitor,C context) {
+        return statementVisitor.visit(this,context);
     }
 
     @Override

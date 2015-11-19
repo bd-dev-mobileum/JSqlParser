@@ -21,6 +21,7 @@
  */
 package net.sf.jsqlparser.statement.select;
 
+import net.sf.jsqlparser.expression.operators.relational.ItemsListVisitor;
 import net.sf.jsqlparser.schema.*;
 
 /**
@@ -32,8 +33,8 @@ public class AllColumns implements SelectItem {
     }
 
     @Override
-    public void accept(SelectItemVisitor selectItemVisitor) {
-        selectItemVisitor.visit(this);
+    public <R, C> R accept(SelectItemVisitor<R,C> selectItemVisitor,C context){
+        return selectItemVisitor.visit(this,context);
     }
 
     @Override

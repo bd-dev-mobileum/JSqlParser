@@ -73,7 +73,7 @@ public class UpdateDeParser {
                 buffer.append(column.getFullyQualifiedName()).append(" = ");
 
                 Expression expression = update.getExpressions().get(i);
-                expression.accept(expressionVisitor);
+                expression.accept(expressionVisitor,null);
                 if (i < update.getColumns().size() - 1) {
                     buffer.append(", ");
                 }
@@ -95,7 +95,7 @@ public class UpdateDeParser {
             buffer.append(" = ");
             buffer.append("(");
             Select select = update.getSelect();
-            select.getSelectBody().accept(selectVisitor);
+            select.getSelectBody().accept(selectVisitor,null);
             buffer.append(")");
         }
 
@@ -114,7 +114,7 @@ public class UpdateDeParser {
 
         if (update.getWhere() != null) {
             buffer.append(" WHERE ");
-            update.getWhere().accept(expressionVisitor);
+            update.getWhere().accept(expressionVisitor,null);
         }
 
     }

@@ -21,19 +21,19 @@
  */
 package net.sf.jsqlparser.statement.select;
 
-public class SelectVisitorAdapter implements SelectVisitor {
+public class SelectVisitorAdapter<R,C> implements SelectVisitor<R,C> {
     @Override
-    public void visit(PlainSelect plainSelect) {
-
+    public R visit(PlainSelect plainSelect,C context) {
+        return null;
     }
 
     @Override
-    public void visit(SetOperationList setOpList) {
-
+    public R visit(SetOperationList setOpList,C context) {
+        return null;
     }
 
     @Override
-    public void visit(WithItem withItem) {
-
+    public R visit(WithItem withItem,C context) {
+        return null;
     }
 }

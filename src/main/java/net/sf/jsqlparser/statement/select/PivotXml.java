@@ -31,8 +31,8 @@ public class PivotXml extends Pivot {
     private boolean inAny = false;
 
 	@Override
-    public void accept(PivotVisitor pivotVisitor) {
-        pivotVisitor.visit(this);
+	public <R, C> R accept(PivotVisitor<R,C> pivotVisitor,C context){
+       return pivotVisitor.visit(this,context);
     }
 
     public SelectBody getInSelect() {

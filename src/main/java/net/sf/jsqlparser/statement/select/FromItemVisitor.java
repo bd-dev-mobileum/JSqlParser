@@ -23,15 +23,15 @@ package net.sf.jsqlparser.statement.select;
 
 import net.sf.jsqlparser.schema.Table;
 
-public interface FromItemVisitor {
+public interface FromItemVisitor<R,C> {
 
-	void visit(Table tableName);
+	R visit(Table tableName,C context);
 
-	void visit(SubSelect subSelect);
+	R visit(SubSelect subSelect,C context);
 
-	void visit(SubJoin subjoin);
+	R visit(SubJoin subjoin,C context);
 
-	void visit(LateralSubSelect lateralSubSelect);
+	R visit(LateralSubSelect lateralSubSelect,C context);
 
-	void visit(ValuesList valuesList);
+	R visit(ValuesList valuesList,C context);
 }

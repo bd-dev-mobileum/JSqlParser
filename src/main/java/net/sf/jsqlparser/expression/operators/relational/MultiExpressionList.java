@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
 import net.sf.jsqlparser.expression.Expression;
 
 /**
@@ -42,8 +43,8 @@ public class MultiExpressionList implements ItemsList {
 	}
 
 	@Override
-	public void accept(ItemsListVisitor itemsListVisitor) {
-		itemsListVisitor.visit(this);
+	public <R, C> R accept(ItemsListVisitor<R,C> itemsListVisitor,C context){
+		return itemsListVisitor.visit(this,context);
 	}
 
 	public List<ExpressionList> getExprList() {

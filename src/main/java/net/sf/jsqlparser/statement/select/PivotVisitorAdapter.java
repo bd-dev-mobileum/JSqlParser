@@ -21,14 +21,14 @@
  */
 package net.sf.jsqlparser.statement.select;
 
-public class PivotVisitorAdapter implements PivotVisitor {
+public class PivotVisitorAdapter<R,C> implements PivotVisitor<R,C> {
     @Override
-    public void visit(Pivot pivot) {
-
+    public R visit(Pivot pivot,C context) {
+        return null;
     }
 
     @Override
-    public void visit(PivotXml pivot) {
-
+    public R visit(PivotXml pivot,C context) {
+        return null;
     }
 }

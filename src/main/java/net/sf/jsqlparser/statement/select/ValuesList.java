@@ -26,6 +26,7 @@ import net.sf.jsqlparser.expression.operators.relational.MultiExpressionList;
 
 import java.util.Iterator;
 import java.util.List;
+
 import net.sf.jsqlparser.expression.Alias;
 
 /**
@@ -49,9 +50,9 @@ public class ValuesList implements FromItem {
 	}
 
 	@Override
-	public void accept(FromItemVisitor fromItemVisitor) {
-		fromItemVisitor.visit(this);
-	}
+	public <R,C> R accept(FromItemVisitor<R,C> fromItemVisitor,C context){
+        return fromItemVisitor.visit(this,context);
+    }
 
 	@Override
 	public Alias getAlias() {

@@ -206,8 +206,6 @@ TOKEN: /* SQL Keywords. prefixed with K_ to avoid name clashes */
 |   <K_ONLY:"ONLY">
 |   <K_COMMIT:"COMMIT">
 |   <K_UNIQUE:"UNIQUE">
-|   <K_WITHIN:"WITHIN">
-|   <K_IF:"IF">
 }
 
 TOKEN : /* Numeric Constants */
@@ -519,7 +517,6 @@ String RelObjectName():
       | tk=<K_LAST> | tk=<K_MATERIALIZED> | tk=<K_NULLS> | tk=<K_PARTITION> | tk=<K_RANGE> 
       | tk=<K_ROW> | tk=<K_ROWS> | tk=<K_SIBLINGS> | tk=<K_VALUE> | tk=<K_XML>
       | tk=<K_COLUMN> | tk=<K_REPLACE> | tk=<K_TRUNCATE> | tk=<K_KEY> | tk=<K_ANY>
-      | tk=<K_OPEN>
       )
 
     { return tk.image; }
@@ -1032,21 +1029,39 @@ Join JoinerExpression():
 	List<Column> columns = null;
 }
 {
-    [   
-           ( <K_LEFT> { join.setLeft(true); }
-  		   | <K_RIGHT> { join.setRight(true); }
-  		   | <K_FULL> { join.setFull(true); } 
-           ) [ <K_OUTER> { join.setOuter(true); } ]
+	/*
+		Refactor to be more restrictive.
+			left [outer] join
+			right [outer] join
+			full [outer] join
+			[inner] join
+			cross join
+			natural join
+     */
+	  /* [ (
+	  	<K_LEFT> { join.setLeft(true); }
+  		| <K_RIGHT> { join.setRight(true); }
+  		| <K_FULL> { join.setFull(true); }
+  		| <K_NATURAL> { join.setNatural(true); }
+		| <K_CROSS> { join.setCross(true); }
+  		)
+  	   ]
+
+  	   [
+  	    (
+  		<K_OUTER> { join.setOuter(true); }
+  		| <K_INNER> { join.setInner(true); }
+  		)
+  	   ] */
+
+       [ ( <K_LEFT> { join.setLeft(true); }
+  		| <K_RIGHT> { join.setRight(true); }
+  		| <K_FULL> { join.setFull(true); } ) [ <K_OUTER> { join.setOuter(true); } ]
         | <K_INNER> { join.setInner(true); }
         | <K_NATURAL> { join.setNatural(true); }
-		| <K_CROSS> { join.setCross(true); } 
-    ]
+		| <K_CROSS> { join.setCross(true); } ]
 
-  	    ( <K_JOIN> | "," { join.setSimple(true); } ) 
-
-        right=FromItem()
-
-
+  	    ( <K_JOIN> | "," { join.setSimple(true); } ) right=FromItem()
 	[
 		( <K_ON> onExpression=Expression()  { join.setOnExpression(onExpression); } )
 		|
@@ -1056,8 +1071,10 @@ Join JoinerExpression():
   	]
   {
   	join.setRightItem(right);
-    return join; 
   }
+
+
+  { return join; }
 }
 
 Expression WhereClause():
@@ -1361,6 +1378,14 @@ Expression RegularCondition():
 	| "~*" { result = new RegExpMatchOperator(RegExpMatchOperatorType.MATCH_CASEINSENSITIVE); }
 	| "!~" { result = new RegExpMatchOperator(RegExpMatchOperatorType.NOT_MATCH_CASESENSITIVE); }
 	| "!~*" { result = new RegExpMatchOperator(RegExpMatchOperatorType.NOT_MATCH_CASEINSENSITIVE); }
+	| "@>" { result = new LeftContainsRight(); }
+	| "<@" { result = new RightContainsLeft(); }
+	| "&&" { result = new OverlappingWith(); }
+	| "<<" { result = new StrictlyLeft(); }
+	| ">>" { result = new StrictlyRight(); }
+	| "-|-" { result = new AdjacentTo(); }
+	| "&<" { result = new NotRight(); }
+	| "&>" { result = new NotLeft(); }
 	)
 	rightExpression=ComparisonItem()
 
@@ -1733,11 +1758,7 @@ Expression PrimaryExpression():
 
     | retval=JdbcNamedParameter()
 
-    | retval=UserVariable()
-
 	| LOOKAHEAD(AnalyticExpression()) retval=AnalyticExpression()
-
-    | LOOKAHEAD(WithinGroupExpression()) retval=WithinGroupExpression()
 
 	| LOOKAHEAD(ExtractExpression()) retval=ExtractExpression()
 
@@ -1790,21 +1811,10 @@ JdbcNamedParameter JdbcNamedParameter() : {
 	Token token;
 }
 {
-    ":" token=<S_IDENTIFIER> { parameter.setName(token.image); }
+        ":" token=<S_IDENTIFIER> { parameter.setName(token.image); }
 	{
 		return parameter;
 	}
-}
-
-UserVariable UserVariable() : {
-    UserVariable var = new UserVariable();
-	Token token;
-}
-{
-    "@" token=<S_IDENTIFIER> { var.setName(token.image); }
-    { 
-        return var; 
-    }
 }
 
 JsonExpression JsonExpression() : {
@@ -1823,32 +1833,38 @@ JsonExpression JsonExpression() : {
 IntervalExpression IntervalExpression() : {
 	IntervalExpression interval = new IntervalExpression();
 	Token token;
+	String name = null;
+	String arr[]=new String[]{"YEAR","MONTH","DAY","HOUR","MINUTE","SECOND","YEARS","MONTHS","DAYS","HOURS","MINUTES","SECONDS"};
 }
 {
 	<K_INTERVAL> token=<S_CHAR_LITERAL> { interval.setParameter(token.image); }
 	{
+			for(String str:Arrays.asList(arr)){
+			String tokenValue=new StringValue(token.image).getValue();
+			if(tokenValue.toLowerCase().endsWith(str.toLowerCase())){
+				interval.setParameter(new StringValue("'"+tokenValue.substring(0,tokenValue.length()-str.length()).trim()+"'")+" "+str);
+				return interval;
+				}
+
+		}
+	}
+	name=RelObjectName()
+	{
+		boolean found=false;
+		for(String str:Arrays.asList(arr)){
+			if(str.equalsIgnoreCase(name)){
+				interval.setParameter(interval.getParameter()+" "+str);
+				found=true;
+				}
+
+		}
+		if(!found){
+		throw new RuntimeException("Expecting one of "+Arrays.toString(arr) +" But found "+name);
+		}
+	 }
+	{
 		return interval;
 	}
-}
-
-WithinGroupExpression WithinGroupExpression() :
-{
-    Token token = null;
-    List<OrderByElement> orderByElements = null;
-    WithinGroupExpression result = new WithinGroupExpression();
-    ExpressionList exprList;
-}
-{
-    token = <S_IDENTIFIER> "(" exprList = SimpleExpressionList() ")" 
-      <K_WITHIN> <K_GROUP>
-    "(" orderByElements = OrderByElements() ")"
-
-    { 
-        result.setName(token.image);
-        result.setExprList(exprList);
-        result.setOrderByElements(orderByElements);
-        return result; 
-    }
 }
 
 AnalyticExpression AnalyticExpression() :
@@ -2068,13 +2084,11 @@ Function Function():
 SubSelect SubSelect():
 {
 	SelectBody selectBody = null;
-    SubSelect subSelect = new SubSelect();
-    List<WithItem> with = null;
 }
 {
-    [ with=WithList() { subSelect.setWithItemsList(with); } ]
     selectBody=SelectBody()
     {
+    	SubSelect subSelect = new SubSelect();
     	subSelect.setSelectBody(selectBody);
     	return subSelect;
     }
@@ -2166,9 +2180,7 @@ CreateTable CreateTable():
     [ <K_UNLOGGED> { createTable.setUnlogged(true); } ]
 	(parameter = CreateParameter() { createOptions.add(parameter); })*
 
-	<K_TABLE> 
-    [ <K_IF> <K_NOT> <K_EXISTS> { createTable.setIfNotExists(true); }]
-    table=Table()
+	<K_TABLE> table=Table()
 	[
 		("("
 		(columnName=<S_IDENTIFIER>
@@ -2360,7 +2372,7 @@ String CreateParameter():
 			tk=<K_NOT> { retval = tk.image; }
 			|
 			tk=<K_PRIMARY> { retval = tk.image; }
-            |
+			|
 			tk=<K_KEY> { retval = tk.image; }
 			|
 			tk=<S_CHAR_LITERAL> { retval = tk.image; }
@@ -2410,10 +2422,10 @@ List<String> ColumnsNamesList():
 	Token tk = null;
 }
 {
-	"("
+	 "("
 
-	 	(tk=<S_IDENTIFIER> | tk=<S_QUOTED_IDENTIFIER>) { retval.add(tk.image); }
-	 	( "," (tk=<S_IDENTIFIER> | tk=<S_QUOTED_IDENTIFIER>) { retval.add(tk.image); } )*
+	 	tk=<S_IDENTIFIER> { retval.add(tk.image); }
+	 	( "," tk=<S_IDENTIFIER> { retval.add(tk.image); } )*
 
 	")"
 	{
@@ -2466,29 +2478,15 @@ Alter Alter():
 	Table table;
 	Token tk;
 	ColDataType dataType;
-    List<String> pkColumnNames = null;
-    List<String> ukColumnNames = null;
 }
 {
-	<K_ALTER> <K_TABLE> table=Table() { alter.setTable(table); } 
+	<K_ALTER> <K_TABLE> table=Table() <K_ADD> <K_COLUMN>
+	(tk=<S_IDENTIFIER>	| tk=<S_QUOTED_IDENTIFIER>) dataType=ColDataType()
 
-    <K_ADD> 
-    
-    (  
-        (  <K_COLUMN>
-	       (tk=<S_IDENTIFIER>	| tk=<S_QUOTED_IDENTIFIER>) dataType=ColDataType()
-            {
-               alter.setColumnName(tk.image);
-               alter.setDataType(dataType);
-            }
-        )
-        |
-        ( <K_PRIMARY> <K_KEY> pkColumnNames=ColumnsNamesList() { alter.setPkColumns(pkColumnNames); } )
-        |
-        ( <K_UNIQUE> <K_KEY> (tk=<S_IDENTIFIER>	| tk=<S_QUOTED_IDENTIFIER>) ukColumnNames=ColumnsNamesList() { alter.setUkName(tk.image); alter.setUkColumns(ukColumnNames); } )
-    )
-
-    {
+	{
+		alter.setTable(table);
+		alter.setColumnName(tk.image);
+		alter.setDataType(dataType);
 		return alter;
 	}
 }

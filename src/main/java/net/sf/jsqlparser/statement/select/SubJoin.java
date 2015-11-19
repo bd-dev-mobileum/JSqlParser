@@ -34,9 +34,9 @@ public class SubJoin implements FromItem {
 	private Pivot pivot;
 
 	@Override
-	public void accept(FromItemVisitor fromItemVisitor) {
-		fromItemVisitor.visit(this);
-	}
+	public <R,C> R accept(FromItemVisitor<R,C> fromItemVisitor,C context){
+        return fromItemVisitor.visit(this,context);
+    }
 
 	public FromItem getLeft() {
 		return left;

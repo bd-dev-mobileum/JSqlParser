@@ -21,42 +21,53 @@
  */
 package net.sf.jsqlparser.expression;
 
+import java.io.Serializable;
+
 /**
  *
  * @author toben
  */
-public class Alias {
+public class Alias
+        implements Serializable
+{
 
-	private String name;
-	private boolean useAs = true;
+    private String name;
+    private boolean useAs = true;
 
-	public Alias(String name) {
-		this.name = name;
-	}
-	
-	public Alias(String name, boolean useAs) {
-		this.name = name;
-		this.useAs = useAs;
-	}
+    public Alias(String name)
+    {
+        this.name = name;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public Alias(String name, boolean useAs)
+    {
+        this.name = name;
+        this.useAs = useAs;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName()
+    {
+        return name;
+    }
 
-	public boolean isUseAs() {
-		return useAs;
-	}
+    public void setName(String name)
+    {
+        this.name = name;
+    }
 
-	public void setUseAs(boolean useAs) {
-		this.useAs = useAs;
-	}
+    public boolean isUseAs()
+    {
+        return useAs;
+    }
 
-	@Override
-	public String toString() {
-		return (useAs ? " AS " : " ") + name;
-	}
+    public void setUseAs(boolean useAs)
+    {
+        this.useAs = useAs;
+    }
+
+    @Override
+    public String toString()
+    {
+        return (useAs ? " AS " : " ") + name;
+    }
 }

@@ -1398,12 +1398,12 @@ public class SelectTest extends TestCase {
     }
 
     public void testInterval1() throws JSQLParserException {
-        String stmt = "SELECT 5 + INTERVAL '3 days'";
+        String stmt = "SELECT 5 + INTERVAL '3' DAYS";
         assertSqlCanBeParsedAndDeparsed(stmt);
     }
 
     public void testInterval2() throws JSQLParserException {
-        String stmt = "SELECT to_timestamp(to_char(now() - INTERVAL '45 MINUTE', 'YYYY-MM-DD-HH24:')) AS START_TIME FROM tab1";
+        String stmt = "SELECT to_timestamp(to_char(now() - INTERVAL '45' MINUTE, 'YYYY-MM-DD-HH24:')) AS START_TIME FROM tab1";
         assertSqlCanBeParsedAndDeparsed(stmt);
 
         Statement st = CCJSqlParserUtil.parse(stmt);
@@ -1427,7 +1427,7 @@ public class SelectTest extends TestCase {
         assertTrue(sub.getRightExpression() instanceof IntervalExpression);
         IntervalExpression iexpr = (IntervalExpression) sub.getRightExpression();
 
-        assertEquals("'45 MINUTE'", iexpr.getParameter());
+        assertEquals("'45' MINUTE", iexpr.getParameter());
     }
 
     public void testMultiValueIn() throws JSQLParserException {
@@ -1482,10 +1482,6 @@ public class SelectTest extends TestCase {
 
     public void testPivotXmlSubquery1() throws JSQLParserException {
         assertSqlCanBeParsedAndDeparsed("SELECT * FROM (SELECT times_purchased, state_code FROM customers t) PIVOT (count(state_code) FOR state_code IN ('NY', 'CT', 'NJ', 'FL', 'MO')) ORDER BY times_purchased");
-    }
-
-    public void testPivotFunction() throws JSQLParserException {
-        assertSqlCanBeParsedAndDeparsed("SELECT to_char((SELECT col1 FROM (SELECT times_purchased, state_code FROM customers t) PIVOT (count(state_code) FOR state_code IN ('NY', 'CT', 'NJ', 'FL', 'MO')) ORDER BY times_purchased)) FROM DUAL");
     }
 
     public void testRegexpLike1() throws JSQLParserException {
@@ -1602,11 +1598,6 @@ public class SelectTest extends TestCase {
         final Select select = (Select) parserManager.parse(new StringReader(statement));
         assertStatementCanBeDeparsedAs(select, statement);
     }
-    
-     public void testReservedKeyword2() throws JSQLParserException {
-        final String stmt = "SELECT open FROM tableName"; 
-        assertSqlCanBeParsedAndDeparsed(stmt);
-    }
 
     public void testCharacterSetClause() throws JSQLParserException {
         String stmt = "SELECT DISTINCT CAST(`view0`.`nick2` AS CHAR (8000) CHARACTER SET utf8) AS `v0` FROM people `view0` WHERE `view0`.`nick2` IS NOT NULL";
@@ -1646,15 +1637,4 @@ public class SelectTest extends TestCase {
         assertSqlCanBeParsedAndDeparsed("SELECT * FROM the_table tt WHERE TT.COL1 = lines(idx).COL1");
     }
 
-    public void testSelectInnerWith() throws JSQLParserException {
-        assertSqlCanBeParsedAndDeparsed("SELECT * FROM (WITH actor AS (SELECT 'a' aid FROM DUAL) SELECT aid FROM actor)");
-    }
-    
-    public void testSelectWithinGroup() throws JSQLParserException {
-        assertSqlCanBeParsedAndDeparsed("SELECT LISTAGG(col1, '##') WITHIN GROUP (ORDER BY col1) FROM table1");
-    }
-    
-    public void testSelectUserVariable() throws JSQLParserException {
-        assertSqlCanBeParsedAndDeparsed("SELECT @col FROM t1");
-    }
 }

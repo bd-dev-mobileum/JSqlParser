@@ -29,300 +29,317 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.SubSelect;
 
-public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVisitor {
+public class ExpressionVisitorAdapter<R,C> implements ExpressionVisitor<R,C>, ItemsListVisitor<R,C> {
     @Override
-    public void visit(NullValue value) {
+    public R visit(NullValue value,C context) {
+        return null;
+    }
+
+    @Override
+    public R visit(Function function,C context) {
+        return null;
+    }
+
+    @Override
+    public R visit(SignedExpression expr,C context) {
+        return expr.getExpression().accept(this,context);
 
     }
 
     @Override
-    public void visit(Function function) {
-
+    public R visit(JdbcParameter parameter,C context) {
+        return null;
     }
 
     @Override
-    public void visit(SignedExpression expr) {
-        expr.getExpression().accept(this);
+    public R visit(JdbcNamedParameter parameter,C context) {
+        return null;
     }
 
     @Override
-    public void visit(JdbcParameter parameter) {
-
+    public R visit(DoubleValue value,C context) {
+        return null;
     }
 
     @Override
-    public void visit(JdbcNamedParameter parameter) {
-
+    public R visit(LongValue value,C context) {
+        return null;
     }
 
     @Override
-    public void visit(DoubleValue value) {
-
+    public R visit(DateValue value,C context) {
+        return null;
     }
 
     @Override
-    public void visit(LongValue value) {
-
+    public R visit(TimeValue value,C context) {
+        return null;
     }
 
     @Override
-    public void visit(DateValue value) {
-
+    public R visit(TimestampValue value,C context) {
+        return null;
     }
 
     @Override
-    public void visit(TimeValue value) {
-
+    public R visit(Parenthesis parenthesis,C context) {
+        return parenthesis.getExpression().accept(this,context);
     }
 
     @Override
-    public void visit(TimestampValue value) {
-
+    public R visit(StringValue value,C context) {
+        return null;
     }
 
     @Override
-    public void visit(Parenthesis parenthesis) {
-        parenthesis.getExpression().accept(this);
+    public R visit(Addition expr,C context) {
+        return visitBinaryExpression(expr,context);
     }
 
     @Override
-    public void visit(StringValue value) {
-
+    public R visit(Division expr,C context) {
+        return visitBinaryExpression(expr,context);
     }
 
     @Override
-    public void visit(Addition expr) {
-        visitBinaryExpression(expr);
+    public R visit(Multiplication expr,C context) {
+        return visitBinaryExpression(expr,context);
     }
 
     @Override
-    public void visit(Division expr) {
-        visitBinaryExpression(expr);
+    public R visit(Subtraction expr,C context) {
+        return visitBinaryExpression(expr,context);
     }
 
     @Override
-    public void visit(Multiplication expr) {
-        visitBinaryExpression(expr);
+    public R visit(AndExpression expr,C context) {
+        return visitBinaryExpression(expr,context);
     }
 
     @Override
-    public void visit(Subtraction expr) {
-        visitBinaryExpression(expr);
+    public R visit(OrExpression expr,C context) {
+        return visitBinaryExpression(expr,context);
     }
 
     @Override
-    public void visit(AndExpression expr) {
-        visitBinaryExpression(expr);
-    }
-
-    @Override
-    public void visit(OrExpression expr) {
-        visitBinaryExpression(expr);
-    }
-
-    @Override
-    public void visit(Between expr) {
-        expr.getLeftExpression().accept(this);
-        expr.getBetweenExpressionStart().accept(this);
-        expr.getBetweenExpressionEnd().accept(this);
-    }
-
-    @Override
-    public void visit(EqualsTo expr) {
-        visitBinaryExpression(expr);
-    }
-
-    @Override
-    public void visit(GreaterThan expr) {
-        visitBinaryExpression(expr);
-    }
-
-    @Override
-    public void visit(GreaterThanEquals expr) {
-        visitBinaryExpression(expr);
-    }
-
-    @Override
-    public void visit(InExpression expr) {
-        expr.getLeftExpression().accept(this);
-        expr.getLeftItemsList().accept(this);
-        expr.getRightItemsList().accept(this);
-    }
-
-    @Override
-    public void visit(IsNullExpression expr) {
-        expr.getLeftExpression().accept(this);
-    }
-
-    @Override
-    public void visit(LikeExpression expr) {
-        visitBinaryExpression(expr);
-    }
-
-    @Override
-    public void visit(MinorThan expr) {
-        visitBinaryExpression(expr);
-    }
-
-    @Override
-    public void visit(MinorThanEquals expr) {
-        visitBinaryExpression(expr);
-    }
-
-    @Override
-    public void visit(NotEqualsTo expr) {
-        visitBinaryExpression(expr);
-    }
-
-    @Override
-    public void visit(Column column) {  
-
-    }
-
-    @Override
-    public void visit(SubSelect subSelect) {
+    public R visit(Between expr,C context) {
         
+        expr.getLeftExpression().accept(this,context);
+        expr.getBetweenExpressionStart().accept(this,context);
+        expr.getBetweenExpressionEnd().accept(this,context);
+        return null;
     }
 
     @Override
-    public void visit(CaseExpression expr) {
-        expr.getSwitchExpression().accept(this);
+    public R visit(EqualsTo expr,C context) {
+        return visitBinaryExpression(expr,context);
+    }
+
+    @Override
+    public R visit(GreaterThan expr,C context) {
+        return visitBinaryExpression(expr,context);
+    }
+
+    @Override
+    public R visit(GreaterThanEquals expr,C context) {
+        return visitBinaryExpression(expr,context);
+    }
+
+    @Override
+    public R visit(InExpression expr,C context) {
+        expr.getLeftExpression().accept(this,context);
+        expr.getLeftItemsList().accept(this,context);
+        expr.getRightItemsList().accept(this,context);
+        return null;
+    }
+
+    @Override
+    public R visit(IsNullExpression expr,C context) {
+        return expr.getLeftExpression().accept(this,context);
+    }
+
+    @Override
+    public R visit(LikeExpression expr,C context) {
+        return visitBinaryExpression(expr,context);
+    }
+
+    @Override
+    public R visit(MinorThan expr,C context) {
+        return visitBinaryExpression(expr,context);
+    }
+
+    @Override
+    public R visit(MinorThanEquals expr,C context) {
+        return visitBinaryExpression(expr,context);
+    }
+
+    @Override
+    public R visit(NotEqualsTo expr,C context) {
+        return visitBinaryExpression(expr,context);
+    }
+
+    @Override
+    public R visit(Column column,C context) {  
+        return null;
+    }
+
+    @Override
+    public R visit(SubSelect subSelect,C context) {
+        return null;
+    }
+
+    @Override
+    public R visit(CaseExpression expr,C context) {
+        expr.getSwitchExpression().accept(this,context);
         for (Expression x : expr.getWhenClauses()) {
-            x.accept(this);
+            x.accept(this,context);
         }
-        expr.getElseExpression().accept(this);
+        expr.getElseExpression().accept(this,context);
+        return null;
     }
 
     @Override
-    public void visit(WhenClause expr) {
-        expr.getWhenExpression().accept(this);
-        expr.getThenExpression().accept(this);
+    public R visit(WhenClause expr,C context) {
+        expr.getWhenExpression().accept(this,context);
+        expr.getThenExpression().accept(this,context);
+        return null;
     }
 
     @Override
-    public void visit(ExistsExpression expr) {
-        expr.getRightExpression().accept(this);
+    public R visit(ExistsExpression expr,C context) {
+        expr.getRightExpression().accept(this,context);
+        return null;
     }
 
     @Override
-    public void visit(AllComparisonExpression expr) {
-
+    public R visit(AllComparisonExpression expr,C context) {
+        return null;
     }
 
     @Override
-    public void visit(AnyComparisonExpression expr) {
-
+    public R visit(AnyComparisonExpression expr,C context) {
+        return null;
     }
 
     @Override
-    public void visit(Concat expr) {
-        visitBinaryExpression(expr);
+    public R visit(Concat expr,C context) {
+        return visitBinaryExpression(expr,context);
     }
 
     @Override
-    public void visit(Matches expr) {
-        visitBinaryExpression(expr);
+    public R visit(Matches expr,C context) {
+        return visitBinaryExpression(expr,context);
     }
 
     @Override
-    public void visit(BitwiseAnd expr) {
-        visitBinaryExpression(expr);
+    public R visit(BitwiseAnd expr,C context) {
+        return visitBinaryExpression(expr,context);
     }
 
     @Override
-    public void visit(BitwiseOr expr) {
-        visitBinaryExpression(expr);
+    public R visit(BitwiseOr expr,C context) {
+        return visitBinaryExpression(expr,context);
     }
 
     @Override
-    public void visit(BitwiseXor expr) {
-        visitBinaryExpression(expr);
+    public R visit(BitwiseXor expr,C context) {
+        return visitBinaryExpression(expr,context);
     }
 
     @Override
-    public void visit(CastExpression expr) {
-        expr.getLeftExpression().accept(this);
+    public R visit(CastExpression expr,C context) {
+        expr.getLeftExpression().accept(this,context);
+        return null;
     }
 
     @Override
-    public void visit(Modulo expr) {
-        visitBinaryExpression(expr);
+    public R visit(Modulo expr,C context) {
+        return visitBinaryExpression(expr,context);
     }
 
     @Override
-    public void visit(AnalyticExpression expr) {
-        expr.getExpression().accept(this);
-        expr.getDefaultValue().accept(this);
-        expr.getOffset().accept(this);
-        for (OrderByElement element : expr.getOrderByElements()) {
-            element.getExpression().accept(this);
+    public R visit(AnalyticExpression expr,C context) {
+        expr.getExpression().accept(this,context);
+        expr.getDefaultValue().accept(this,context);
+        expr.getOffset().accept(this,context);
+        for (OrderByElement element : expr.getOrderByElements()){
+            element.getExpression().accept(this,context);
         }
 
-        expr.getWindowElement().getRange().getStart().getExpression().accept(this);
-        expr.getWindowElement().getRange().getEnd().getExpression().accept(this);
-        expr.getWindowElement().getOffset().getExpression().accept(this);
+        expr.getWindowElement().getRange().getStart().getExpression().accept(this,context);
+        expr.getWindowElement().getRange().getEnd().getExpression().accept(this,context);
+        expr.getWindowElement().getOffset().getExpression().accept(this,context);
+        return null;
     }
 
     @Override
-    public void visit(ExtractExpression expr) {
-        expr.getExpression().accept(this);
+    public R visit(ExtractExpression expr,C context) {
+        expr.getExpression().accept(this,context);
+        return null;
     }
 
     @Override
-    public void visit(IntervalExpression expr) {
-
+    public R visit(IntervalExpression expr,C context) {
+        return null;
     }
 
     @Override
-    public void visit(OracleHierarchicalExpression expr) {
-        expr.getConnectExpression().accept(this);
-        expr.getStartExpression().accept(this);
+    public R visit(OracleHierarchicalExpression expr,C context) {
+        expr.getConnectExpression().accept(this,context);
+        expr.getStartExpression().accept(this,context);
+        return null;
     }
 
     @Override
-    public void visit(RegExpMatchOperator expr) {
-        visitBinaryExpression(expr);
+    public R visit(RegExpMatchOperator expr,C context) {
+        return visitBinaryExpression(expr,context);
     }
 
     @Override
-    public void visit(ExpressionList expressionList) {
+    public R visit(ExpressionList expressionList,C context) {
         for (Expression expr : expressionList.getExpressions()) {
-            expr.accept(this);
+            expr.accept(this,context);
         }
+        return null;
     }
 
     @Override
-    public void visit(MultiExpressionList multiExprList) {
+    public R visit(MultiExpressionList multiExprList,C context) {
         for (ExpressionList list : multiExprList.getExprList()) {
-            visit(list);
+            visit(list,context);
         }
+        return null;
     }
 
-    protected void visitBinaryExpression(BinaryExpression expr) {
-        expr.getLeftExpression().accept(this);
-        expr.getRightExpression().accept(this);
+    protected R visitBinaryExpression(BinaryExpression expr,C context) {
+        expr.getLeftExpression().accept(this,context);
+        expr.getRightExpression().accept(this,context);
+        return null;
     }
 
     @Override
-    public void visit(JsonExpression jsonExpr) {
-        visit(jsonExpr.getColumn());
+    public R visit(JsonExpression jsonExpr,C context) {
+       return visit(jsonExpr.getColumn(),context);
     }
 
 	@Override
-	public void visit(RegExpMySQLOperator expr) {
-		visitBinaryExpression(expr);	
+	public R visit(RegExpMySQLOperator expr,C context) {
+		return visitBinaryExpression(expr,context);	
+	}
+	@Override
+	public R visit(RangeOperators expr,C context) {
+		return visitBinaryExpression(expr,context);
 	}
 
     @Override
-    public void visit(WithinGroupExpression wgexpr) {
-        wgexpr.getExprList().accept(this);
-        for (OrderByElement element : wgexpr.getOrderByElements()) {
-            element.getExpression().accept(this);
-        }
+    public R visit(BooleanValue nullValue, C context)
+    {
+        return null;
     }
-
+    
     @Override
-    public void visit(UserVariable var) {
-        
+    public R visit(ObjectValue value, C context)
+    {
+        return null;
     }
 }

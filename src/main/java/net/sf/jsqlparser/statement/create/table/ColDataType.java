@@ -21,11 +21,12 @@
  */
 package net.sf.jsqlparser.statement.create.table;
 
+import java.io.Serializable;
 import java.util.List;
 
 import net.sf.jsqlparser.statement.select.PlainSelect;
 
-public class ColDataType {
+public class ColDataType implements Serializable{
 
 	private String dataType;
 	private List<String> argumentsStringList;

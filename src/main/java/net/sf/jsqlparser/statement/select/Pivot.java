@@ -23,9 +23,10 @@ package net.sf.jsqlparser.statement.select;
 
 import net.sf.jsqlparser.schema.Column;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Pivot {
+public class Pivot implements Serializable{
 
     private List<FunctionItem> functionItems;
 
@@ -35,8 +36,8 @@ public class Pivot {
 
     private List<ExpressionListItem> multiInItems;
 
-    public void accept(PivotVisitor pivotVisitor) {
-        pivotVisitor.visit(this);
+    public <R, C> R accept(PivotVisitor<R,C> pivotVisitor,C context){
+        return pivotVisitor.visit(this,context);
     }
 
     public List<SelectExpressionItem> getSingleInItems() {

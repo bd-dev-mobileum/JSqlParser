@@ -21,10 +21,12 @@
  */
 package net.sf.jsqlparser.statement.select;
 
+import java.io.Serializable;
+
 import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 
-public class ExpressionListItem {
+public class ExpressionListItem implements Serializable{
 
     private ExpressionList expressionList;
     private Alias alias;

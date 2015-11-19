@@ -35,8 +35,10 @@ public class AllComparisonExpression implements Expression {
 		return subSelect;
 	}
 
-	@Override
-	public void accept(ExpressionVisitor expressionVisitor) {
-		expressionVisitor.visit(this);
-	}
+
+    @Override
+    public <R, C> R accept(ExpressionVisitor<R, C> expressionVisitor, C context)
+    {
+        return expressionVisitor.visit(this, context);
+    }
 }

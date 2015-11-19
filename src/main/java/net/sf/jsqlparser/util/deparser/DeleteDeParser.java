@@ -56,9 +56,8 @@ public class DeleteDeParser {
 		buffer.append("DELETE FROM ").append(delete.getTable().getFullyQualifiedName());
 		if (delete.getWhere() != null) {
 			buffer.append(" WHERE ");
-			delete.getWhere().accept(expressionVisitor);
+			delete.getWhere().accept(expressionVisitor,null);
 		}
-
 	}
 
 	public ExpressionVisitor getExpressionVisitor() {

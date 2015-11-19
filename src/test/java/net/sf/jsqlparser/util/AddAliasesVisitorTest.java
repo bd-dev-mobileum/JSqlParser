@@ -45,7 +45,7 @@ public class AddAliasesVisitorTest {
 		String sql = "select a,b,c from test";
 		Select select = (Select) parserManager.parse(new StringReader(sql));
 		final AddAliasesVisitor instance = new AddAliasesVisitor();
-		select.getSelectBody().accept(instance);
+		select.getSelectBody().accept(instance,null);
 
 		assertEquals("SELECT a AS A1, b AS A2, c AS A3 FROM test", select.toString());
 	}
@@ -55,7 +55,7 @@ public class AddAliasesVisitorTest {
 		String sql = "select a,b as a1,c from test";
 		Select select = (Select) parserManager.parse(new StringReader(sql));
 		final AddAliasesVisitor instance = new AddAliasesVisitor();
-		select.getSelectBody().accept(instance);
+		select.getSelectBody().accept(instance,null);
 
 		assertEquals("SELECT a AS A2, b AS a1, c AS A3 FROM test", select.toString());
 	}
@@ -65,7 +65,7 @@ public class AddAliasesVisitorTest {
 		String sql = "select 3+4 from test";
 		Select select = (Select) parserManager.parse(new StringReader(sql));
 		final AddAliasesVisitor instance = new AddAliasesVisitor();
-		select.getSelectBody().accept(instance);
+		select.getSelectBody().accept(instance,null);
 
 		assertEquals("SELECT 3 + 4 AS A1 FROM test", select.toString());
 	}
@@ -78,7 +78,7 @@ public class AddAliasesVisitorTest {
 		String sql = "select 3+4 from test union select 7+8 from test2";
 		Select setOpList = (Select) parserManager.parse(new StringReader(sql));
 		final AddAliasesVisitor instance = new AddAliasesVisitor();
-		setOpList.getSelectBody().accept(instance);
+		setOpList.getSelectBody().accept(instance,null);
 
 		assertEquals("(SELECT 3 + 4 AS A1 FROM test) UNION (SELECT 7 + 8 AS A1 FROM test2)", setOpList.toString());
 	}

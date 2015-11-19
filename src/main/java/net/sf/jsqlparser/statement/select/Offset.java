@@ -21,11 +21,13 @@
  */
 package net.sf.jsqlparser.statement.select;
 
+import java.io.Serializable;
+
 /**
  * An offset clause in the form OFFSET offset
  * or in the form OFFSET offset (ROW | ROWS)
  */
-public class Offset {
+public class Offset implements Serializable{
 
 	private long offset;
 	private boolean offsetJdbcParameter = false;

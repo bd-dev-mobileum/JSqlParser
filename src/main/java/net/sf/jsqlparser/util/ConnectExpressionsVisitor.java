@@ -34,7 +34,7 @@ import java.util.*;
  *
  * @author tw
  */
-public abstract class ConnectExpressionsVisitor implements SelectVisitor, SelectItemVisitor {
+public abstract class ConnectExpressionsVisitor<R,C> implements SelectVisitor<R,C>, SelectItemVisitor<R,C> {
 
 	private String alias = "expr";
 	private final List<SelectExpressionItem> itemsExpr = new LinkedList<SelectExpressionItem>();
@@ -55,9 +55,9 @@ public abstract class ConnectExpressionsVisitor implements SelectVisitor, Select
 	protected abstract BinaryExpression createBinaryExpression();
 
 	@Override
-	public void visit(PlainSelect plainSelect) {
+	public R visit(PlainSelect plainSelect,C context) {
 		for (SelectItem item : plainSelect.getSelectItems()) {
-			item.accept(this);
+			item.accept(this,context);
 		}
 
 		if (itemsExpr.size() > 1) {
@@ -79,31 +79,35 @@ public abstract class ConnectExpressionsVisitor implements SelectVisitor, Select
 		}
 
 		((SelectExpressionItem) plainSelect.getSelectItems().get(0)).setAlias(new Alias(alias));
+		return null;
 	}
 
 	@Override
-	public void visit(SetOperationList setOpList) {
+	public R visit(SetOperationList setOpList,C context) {
 		for (PlainSelect select : setOpList.getPlainSelects()) {
-			select.accept(this);
+			select.accept(this,context);
 		}
+		return null;
 	}
 
 	@Override
-	public void visit(WithItem withItem) {
+	public R visit(WithItem withItem,C context) {
+	    return null;
 	}
 
 	@Override
-	public void visit(AllTableColumns allTableColumns) {
+	public R visit(AllTableColumns allTableColumns,C context) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
-	public void visit(AllColumns allColumns) {
+	public R visit(AllColumns allColumns,C context) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
-	public void visit(SelectExpressionItem selectExpressionItem) {
+	public R visit(SelectExpressionItem selectExpressionItem,C context) {
 		itemsExpr.add(selectExpressionItem);
+		return null;
 	}
 }

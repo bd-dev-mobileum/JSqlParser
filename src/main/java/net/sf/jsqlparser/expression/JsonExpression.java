@@ -55,8 +55,8 @@ public class JsonExpression  implements Expression {
     private List<String> idents = new ArrayList<String>();
     
     @Override
-    public void accept(ExpressionVisitor expressionVisitor) {
-        expressionVisitor.visit(this);
+    public <R, C> R accept(ExpressionVisitor<R, C> expressionVisitor,C context) {
+        return expressionVisitor.visit(this,context);
     }
 
     public Column getColumn() {

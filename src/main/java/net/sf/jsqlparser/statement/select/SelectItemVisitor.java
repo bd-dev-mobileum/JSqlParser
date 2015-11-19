@@ -21,11 +21,11 @@
  */
 package net.sf.jsqlparser.statement.select;
 
-public interface SelectItemVisitor {
+public interface SelectItemVisitor<R,C> {
 
-	void visit(AllColumns allColumns);
+	R visit(AllColumns allColumns,C context);
 
-	void visit(AllTableColumns allTableColumns);
+	R visit(AllTableColumns allTableColumns,C context);
 
-	void visit(SelectExpressionItem selectExpressionItem);
+	R visit(SelectExpressionItem selectExpressionItem,C context);
 }

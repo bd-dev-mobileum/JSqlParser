@@ -21,7 +21,9 @@
  */
 package net.sf.jsqlparser.expression;
 
-public interface Expression {
+import java.io.Serializable;
 
-	void accept(ExpressionVisitor expressionVisitor);
+public interface Expression extends Serializable{
+
+    <R, C> R accept(ExpressionVisitor<R,C> expressionVisitor,C context);
 }

@@ -33,9 +33,9 @@ public class Select implements Statement {
 	private List<WithItem> withItemsList;
 
 	@Override
-	public void accept(StatementVisitor statementVisitor) {
-		statementVisitor.visit(this);
-	}
+	public <R,C> R accept(StatementVisitor<R,C> statementVisitor,C context) {
+        return statementVisitor.visit(this,context);
+    }
 
 	public SelectBody getSelectBody() {
 		return selectBody;

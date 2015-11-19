@@ -23,11 +23,11 @@ package net.sf.jsqlparser.expression.operators.relational;
 
 import net.sf.jsqlparser.statement.select.SubSelect;
 
-public interface ItemsListVisitor {
+public interface ItemsListVisitor<R,C> {
 
-	void visit(SubSelect subSelect);
+	R visit(SubSelect subSelect,C context);
 
-	void visit(ExpressionList expressionList);
+	R visit(ExpressionList expressionList,C context);
 
-	void visit(MultiExpressionList multiExprList);
+	R visit(MultiExpressionList multiExprList,C context);
 }

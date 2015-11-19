@@ -38,8 +38,8 @@ public class WhenClause implements Expression {
 	 * @see net.sf.jsqlparser.expression.Expression#accept(net.sf.jsqlparser.expression.ExpressionVisitor)
 	 */
 	@Override
-	public void accept(ExpressionVisitor expressionVisitor) {
-		expressionVisitor.visit(this);
+	public <R, C> R accept(ExpressionVisitor<R, C> expressionVisitor,C context) {
+		return expressionVisitor.visit(this,context);
 	}
 
 	/**

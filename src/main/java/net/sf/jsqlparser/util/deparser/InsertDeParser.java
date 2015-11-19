@@ -39,7 +39,7 @@ import net.sf.jsqlparser.statement.select.WithItem;
  * A class to de-parse (that is, tranform from JSqlParser hierarchy into a
  * string) an {@link net.sf.jsqlparser.statement.insert.Insert}
  */
-public class InsertDeParser implements ItemsListVisitor {
+public class InsertDeParser implements ItemsListVisitor<Void,Void> {
 
     private StringBuilder buffer;
     private ExpressionVisitor expressionVisitor;
@@ -89,7 +89,7 @@ public class InsertDeParser implements ItemsListVisitor {
         }
 
         if (insert.getItemsList() != null) {
-            insert.getItemsList().accept(this);
+            insert.getItemsList().accept(this,null);
         }
 
         if (insert.getSelect() != null) {
@@ -100,11 +100,11 @@ public class InsertDeParser implements ItemsListVisitor {
             if (insert.getSelect().getWithItemsList() != null) {
                 buffer.append("WITH ");
                 for (WithItem with : insert.getSelect().getWithItemsList()) {
-                    with.accept(selectVisitor);
+                    with.accept(selectVisitor,null);
                 }
                 buffer.append(" ");
             }
-            insert.getSelect().getSelectBody().accept(selectVisitor);
+            insert.getSelect().getSelectBody().accept(selectVisitor,null);
             if (insert.isUseSelectBrackets()) {
                 buffer.append(")");
             }
@@ -124,26 +124,27 @@ public class InsertDeParser implements ItemsListVisitor {
     }
 
     @Override
-    public void visit(ExpressionList expressionList) {
+    public Void visit(ExpressionList expressionList,Void v) {
         buffer.append(" VALUES (");
         for (Iterator<Expression> iter = expressionList.getExpressions().iterator(); iter.hasNext();) {
             Expression expression = iter.next();
-            expression.accept(expressionVisitor);
+            expression.accept(expressionVisitor,v);
             if (iter.hasNext()) {
                 buffer.append(", ");
             }
         }
         buffer.append(")");
+        return null;
     }
 
     @Override
-    public void visit(MultiExpressionList multiExprList) {
+    public Void visit(MultiExpressionList multiExprList,Void v) {
         buffer.append(" VALUES ");
         for (Iterator<ExpressionList> it = multiExprList.getExprList().iterator(); it.hasNext();) {
             buffer.append("(");
             for (Iterator<Expression> iter = it.next().getExpressions().iterator(); iter.hasNext();) {
                 Expression expression = iter.next();
-                expression.accept(expressionVisitor);
+                expression.accept(expressionVisitor,v);
                 if (iter.hasNext()) {
                     buffer.append(", ");
                 }
@@ -153,11 +154,13 @@ public class InsertDeParser implements ItemsListVisitor {
                 buffer.append(", ");
             }
         }
+        return null;
     }
 
     @Override
-    public void visit(SubSelect subSelect) {
-        subSelect.getSelectBody().accept(selectVisitor);
+    public Void visit(SubSelect subSelect,Void v) {
+        subSelect.getSelectBody().accept(selectVisitor,v);
+        return null;
     }
 
     public ExpressionVisitor getExpressionVisitor() {

@@ -43,8 +43,8 @@ public class LateralSubSelect implements FromItem {
 	}
 
 	@Override
-	public void accept(FromItemVisitor fromItemVisitor) {
-		fromItemVisitor.visit(this);
+	public <R,C> R accept(FromItemVisitor<R,C> fromItemVisitor,C context){
+		return fromItemVisitor.visit(this,context);
 	}
 
 	@Override

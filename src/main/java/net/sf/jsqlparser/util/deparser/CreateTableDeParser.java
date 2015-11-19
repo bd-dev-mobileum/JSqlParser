@@ -53,11 +53,7 @@ public class CreateTableDeParser {
             buffer.append(params).append(' ');
         }
 
-        buffer.append("TABLE ");
-        if (createTable.isIfNotExists()) {
-            buffer.append("IF NOT EXISTS ");
-        }
-        buffer.append(createTable.getTable().getFullyQualifiedName());
+        buffer.append("TABLE ").append(createTable.getTable().getFullyQualifiedName());
         if (createTable.getSelect() != null) {
             buffer.append(" AS ").append(createTable.getSelect().toString());
         } else {
@@ -91,7 +87,7 @@ public class CreateTableDeParser {
                 buffer.append(")");
             }
         }
-
+        
         params = PlainSelect.getStringList(createTable.getTableOptionsStrings(), false, false);
         if (!"".equals(params)) {
             buffer.append(' ').append(params);

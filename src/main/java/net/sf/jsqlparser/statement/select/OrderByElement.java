@@ -63,8 +63,8 @@ public class OrderByElement {
         return ascDesc;
     }
 
-    public void accept(OrderByVisitor orderByVisitor) {
-        orderByVisitor.visit(this);
+    public <R, C> R accept(OrderByVisitor<R,C> orderByVisitor,C context){
+        return orderByVisitor.visit(this,context);
     }
 
     public Expression getExpression() {

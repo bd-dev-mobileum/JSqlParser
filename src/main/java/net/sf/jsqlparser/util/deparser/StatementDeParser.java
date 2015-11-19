@@ -39,49 +39,63 @@ import net.sf.jsqlparser.statement.select.WithItem;
 import net.sf.jsqlparser.statement.truncate.Truncate;
 import net.sf.jsqlparser.statement.update.Update;
 
-public class StatementDeParser implements StatementVisitor {
+public class StatementDeParser
+        implements StatementVisitor<Void, Void>
+{
 
     private StringBuilder buffer;
 
-    public StatementDeParser(StringBuilder buffer) {
+    public StatementDeParser(StringBuilder buffer)
+    {
         this.buffer = buffer;
     }
 
     @Override
-    public void visit(CreateIndex createIndex) {
+    public Void visit(CreateIndex createIndex, Void v)
+    {
         CreateIndexDeParser createIndexDeParser = new CreateIndexDeParser(buffer);
         createIndexDeParser.deParse(createIndex);
+        return null;
     }
 
     @Override
-    public void visit(CreateTable createTable) {
+    public Void visit(CreateTable createTable, Void v)
+    {
         CreateTableDeParser createTableDeParser = new CreateTableDeParser(buffer);
         createTableDeParser.deParse(createTable);
+        return null;
     }
 
     @Override
-    public void visit(CreateView createView) {
+    public Void visit(CreateView createView, Void v)
+    {
         CreateViewDeParser createViewDeParser = new CreateViewDeParser(buffer);
         createViewDeParser.deParse(createView);
+        return null;
     }
 
     @Override
-    public void visit(Delete delete) {
+    public Void visit(Delete delete, Void v)
+    {
         SelectDeParser selectDeParser = new SelectDeParser();
         selectDeParser.setBuffer(buffer);
         ExpressionDeParser expressionDeParser = new ExpressionDeParser(selectDeParser, buffer);
         selectDeParser.setExpressionVisitor(expressionDeParser);
         DeleteDeParser deleteDeParser = new DeleteDeParser(expressionDeParser, buffer);
         deleteDeParser.deParse(delete);
+        return null;
     }
 
     @Override
-    public void visit(Drop drop) {
+    public Void visit(Drop drop, Void v)
+    {
         // TODO Auto-generated method stub
+        return null;
     }
 
     @Override
-    public void visit(Insert insert) {
+    public Void visit(Insert insert, Void v)
+    {
         SelectDeParser selectDeParser = new SelectDeParser();
         selectDeParser.setBuffer(buffer);
         ExpressionDeParser expressionDeParser = new ExpressionDeParser(selectDeParser, buffer);
@@ -89,20 +103,24 @@ public class StatementDeParser implements StatementVisitor {
         InsertDeParser insertDeParser = new InsertDeParser(expressionDeParser, selectDeParser, buffer);
         insertDeParser.deParse(insert);
 
+        return null;
     }
 
     @Override
-    public void visit(Replace replace) {
+    public Void visit(Replace replace, Void v)
+    {
         SelectDeParser selectDeParser = new SelectDeParser();
         selectDeParser.setBuffer(buffer);
         ExpressionDeParser expressionDeParser = new ExpressionDeParser(selectDeParser, buffer);
         selectDeParser.setExpressionVisitor(expressionDeParser);
         ReplaceDeParser replaceDeParser = new ReplaceDeParser(expressionDeParser, selectDeParser, buffer);
         replaceDeParser.deParse(replace);
+        return null;
     }
 
     @Override
-    public void visit(Select select) {
+    public Void visit(Select select, Void v)
+    {
         SelectDeParser selectDeParser = new SelectDeParser();
         selectDeParser.setBuffer(buffer);
         ExpressionDeParser expressionDeParser = new ExpressionDeParser(selectDeParser, buffer);
@@ -111,22 +129,26 @@ public class StatementDeParser implements StatementVisitor {
             buffer.append("WITH ");
             for (Iterator<WithItem> iter = select.getWithItemsList().iterator(); iter.hasNext();) {
                 WithItem withItem = iter.next();
-                withItem.accept(selectDeParser);
+                withItem.accept(selectDeParser, null);
                 if (iter.hasNext()) {
                     buffer.append(",");
                 }
                 buffer.append(" ");
             }
         }
-        select.getSelectBody().accept(selectDeParser);
+        select.getSelectBody().accept(selectDeParser, null);
+        return null;
     }
 
     @Override
-    public void visit(Truncate truncate) {
+    public Void visit(Truncate truncate, Void v)
+    {
+        return null;
     }
 
     @Override
-    public void visit(Update update) {
+    public Void visit(Update update, Void v)
+    {
         SelectDeParser selectDeParser = new SelectDeParser();
         selectDeParser.setBuffer(buffer);
         ExpressionDeParser expressionDeParser = new ExpressionDeParser(selectDeParser, buffer);
@@ -134,34 +156,43 @@ public class StatementDeParser implements StatementVisitor {
         selectDeParser.setExpressionVisitor(expressionDeParser);
         updateDeParser.deParse(update);
 
+        return null;
     }
 
-    public StringBuilder getBuffer() {
+    public StringBuilder getBuffer()
+    {
         return buffer;
     }
 
-    public void setBuffer(StringBuilder buffer) {
+    public Void setBuffer(StringBuilder buffer)
+    {
         this.buffer = buffer;
+        return null;
     }
 
     @Override
-    public void visit(Alter alter) {
-        AlterDeParser alterDeParser = new AlterDeParser(buffer);
-        alterDeParser.deParse(alter);
+    public Void visit(Alter alter, Void v)
+    {
+
+        return null;
     }
 
     @Override
-    public void visit(Statements stmts) {
-        stmts.accept(this);
+    public Void visit(Statements stmts, Void v)
+    {
+        stmts.accept(this, v);
+        return null;
     }
 
     @Override
-    public void visit(Execute execute) {
+    public Void visit(Execute execute, Void v)
+    {
         SelectDeParser selectDeParser = new SelectDeParser();
         selectDeParser.setBuffer(buffer);
         ExpressionDeParser expressionDeParser = new ExpressionDeParser(selectDeParser, buffer);
         ExecuteDeParser executeDeParser = new ExecuteDeParser(expressionDeParser, buffer);
         selectDeParser.setExpressionVisitor(expressionDeParser);
         executeDeParser.deParse(execute);
+        return null;
     }
 }

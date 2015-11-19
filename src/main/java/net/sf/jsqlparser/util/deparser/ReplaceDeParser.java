@@ -37,7 +37,7 @@ import net.sf.jsqlparser.statement.select.SubSelect;
  * A class to de-parse (that is, tranform from JSqlParser hierarchy into a
  * string) a {@link net.sf.jsqlparser.statement.replace.Replace}
  */
-public class ReplaceDeParser implements ItemsListVisitor {
+public class ReplaceDeParser implements ItemsListVisitor<Void,Void> {
 
 	private StringBuilder buffer;
     private ExpressionVisitor expressionVisitor;
@@ -94,7 +94,7 @@ public class ReplaceDeParser implements ItemsListVisitor {
 				buffer.append(column.getFullyQualifiedName()).append("=");
 
 				Expression expression = replace.getExpressions().get(i);
-				expression.accept(expressionVisitor);
+				expression.accept(expressionVisitor,null);
 				if (i < replace.getColumns().size() - 1) {
 					buffer.append(", ");
 				}
@@ -115,21 +115,23 @@ public class ReplaceDeParser implements ItemsListVisitor {
 	}
 
 	@Override
-	public void visit(ExpressionList expressionList) {
+	public Void visit(ExpressionList expressionList,Void v) {
 		buffer.append(" VALUES (");
 		for (Iterator<Expression> iter = expressionList.getExpressions().iterator(); iter.hasNext();) {
 			Expression expression = iter.next();
-			expression.accept(expressionVisitor);
+			expression.accept(expressionVisitor,v);
 			if (iter.hasNext()) {
 				buffer.append(", ");
 			}
 		}
 		buffer.append(")");
+		return null;
 	}
 
 	@Override
-	public void visit(SubSelect subSelect) {
-		subSelect.getSelectBody().accept(selectVisitor);
+	public Void visit(SubSelect subSelect,Void v) {
+		subSelect.getSelectBody().accept(selectVisitor,v);
+		return null;
 	}
 
 	public ExpressionVisitor getExpressionVisitor() {
@@ -149,7 +151,7 @@ public class ReplaceDeParser implements ItemsListVisitor {
 	}
 
 	@Override
-	public void visit(MultiExpressionList multiExprList) {
+	public Void visit(MultiExpressionList multiExprList,Void v) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }

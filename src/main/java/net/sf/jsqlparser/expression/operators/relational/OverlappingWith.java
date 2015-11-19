@@ -19,30 +19,13 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package net.sf.jsqlparser.util.deparser;
+package net.sf.jsqlparser.expression.operators.relational;
 
-import net.sf.jsqlparser.statement.alter.Alter;
+public class OverlappingWith extends RangeOperators {
 
-/**
- * very simple alter statement deparser
- * @author toben
- */
-public class AlterDeParser {
-    private StringBuilder buffer;
-
-    public AlterDeParser(StringBuilder buffer) {
-        this.buffer = buffer;
-    }
-    
-    public void deParse(Alter alter) {
-		buffer.append(alter.toString());
+	@Override
+	public String getStringExpression() {
+		return "&&";
 	}
 
-	public StringBuilder getBuffer() {
-		return buffer;
-	}
-
-	public void setBuffer(StringBuilder buffer) {
-		this.buffer = buffer;
-	}
 }

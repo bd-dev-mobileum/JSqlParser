@@ -21,7 +21,10 @@
  */
 package net.sf.jsqlparser.statement.select;
 
-public interface SelectBody {
+import java.io.Serializable;
 
-	void accept(SelectVisitor selectVisitor);
+public interface SelectBody extends Serializable
+{
+
+    <R, C> R accept(SelectVisitor<R, C> selectVisitor, C context);
 }

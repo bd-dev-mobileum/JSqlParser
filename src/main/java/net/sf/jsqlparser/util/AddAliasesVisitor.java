@@ -35,7 +35,7 @@ import java.util.*;
  *
  * @author tw
  */
-public class AddAliasesVisitor implements SelectVisitor, SelectItemVisitor {
+public class AddAliasesVisitor<R,C> implements SelectVisitor<R,C>, SelectItemVisitor<R,C> {
 
 	private List<String> aliases = new LinkedList<String>();
 	private boolean firstRun = true;
@@ -43,33 +43,35 @@ public class AddAliasesVisitor implements SelectVisitor, SelectItemVisitor {
 	private String prefix = "A";
 
 	@Override
-	public void visit(PlainSelect plainSelect) {
+	public R visit(PlainSelect plainSelect,C context) {
 		firstRun = true;
 		counter = 0;
 		aliases.clear();
 		for (SelectItem item : plainSelect.getSelectItems()) {
-			item.accept(this);
+			item.accept(this,context);
 		}
 		firstRun = false;
 		for (SelectItem item : plainSelect.getSelectItems()) {
-			item.accept(this);
+			item.accept(this,context);
 		}
+		return null;
 	}
 
 	@Override
-	public void visit(SetOperationList setOpList) {
+	public R visit(SetOperationList setOpList,C context) {
 		for (PlainSelect select : setOpList.getPlainSelects()) {
-			select.accept(this);
+			select.accept(this,context);
 		}
+		return null;
 	}
 
 	@Override
-	public void visit(AllTableColumns allTableColumns) {
+	public R visit(AllTableColumns allTableColumns,C context) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
-	public void visit(SelectExpressionItem selectExpressionItem) {
+	public R visit(SelectExpressionItem selectExpressionItem,C context) {
 		if (firstRun) {
 			if (selectExpressionItem.getAlias() != null) {
 				aliases.add(selectExpressionItem.getAlias().getName().toUpperCase());
@@ -87,6 +89,7 @@ public class AddAliasesVisitor implements SelectVisitor, SelectItemVisitor {
 				}
 			}
 		}
+		return null;
 	}
 
 	/**
@@ -109,12 +112,12 @@ public class AddAliasesVisitor implements SelectVisitor, SelectItemVisitor {
 	}
 
 	@Override
-	public void visit(WithItem withItem) {
+	public R visit(WithItem withItem,C context) {
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	@Override
-	public void visit(AllColumns allColumns) {
+	public R visit(AllColumns allColumns,C context) {
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 }

@@ -21,7 +21,9 @@
  */
 package net.sf.jsqlparser.expression;
 
-public class WindowOffset {
+import java.io.Serializable;
+
+public class WindowOffset implements Serializable{
 
     public enum Type {
 

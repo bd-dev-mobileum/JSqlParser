@@ -21,19 +21,19 @@
  */
 package net.sf.jsqlparser.statement.select;
 
-public class SelectItemVisitorAdapter implements SelectItemVisitor{
+public class SelectItemVisitorAdapter<R,C> implements SelectItemVisitor<R,C>{
     @Override
-    public void visit(AllColumns columns) {
-
+    public R visit(AllColumns columns,C context) {
+        return null;
     }
 
     @Override
-    public void visit(AllTableColumns columns) {
-
+    public R visit(AllTableColumns columns,C context) {
+        return null;
     }
 
     @Override
-    public void visit(SelectExpressionItem item) {
-
+    public R visit(SelectExpressionItem item,C context) {
+        return null;
     }
 }

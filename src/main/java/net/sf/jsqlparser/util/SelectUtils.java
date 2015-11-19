@@ -104,23 +104,24 @@ public final class SelectUtils {
 	 * @param expr
 	 */
 	public static void addExpression(Select select, final Expression expr) {
-		select.getSelectBody().accept(new SelectVisitor() {
+		select.getSelectBody().accept(new SelectVisitor<Void,Void>() {
 
 			@Override
-			public void visit(PlainSelect plainSelect) {
-				plainSelect.getSelectItems().add(new SelectExpressionItem(expr));
+			public Void visit(PlainSelect plainSelect,Void v) {
+			    plainSelect.getSelectItems().add(new SelectExpressionItem(expr));
+			    return null;
 			}
 
 			@Override
-			public void visit(SetOperationList setOpList) {
+			public Void visit(SetOperationList setOpList,Void v) {
 				throw new UnsupportedOperationException("Not supported yet.");
 			}
 
 			@Override
-			public void visit(WithItem withItem) {
+			public Void visit(WithItem withItem,Void v) {
 				throw new UnsupportedOperationException("Not supported yet.");
 			}
-		});
+		},null);
 	}
 
 	/**
@@ -154,22 +155,23 @@ public final class SelectUtils {
      * @param expr 
      */
     public static void addGroupBy(Select select, final Expression expr) {
-        select.getSelectBody().accept(new SelectVisitor() {
+        select.getSelectBody().accept(new SelectVisitor<Void,Void>() {
 
 			@Override
-			public void visit(PlainSelect plainSelect) {
+			public Void visit(PlainSelect plainSelect,Void v) {
                 plainSelect.addGroupByColumnReference(expr);
+                return null;
 			}
 
 			@Override
-			public void visit(SetOperationList setOpList) {
+			public Void visit(SetOperationList setOpList,Void v) {
 				throw new UnsupportedOperationException("Not supported yet.");
 			}
 
 			@Override
-			public void visit(WithItem withItem) {
+			public Void visit(WithItem withItem,Void v) {
 				throw new UnsupportedOperationException("Not supported yet.");
 			}
-		});
+		},null);
     }
 }

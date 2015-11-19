@@ -21,7 +21,7 @@
  */
 package net.sf.jsqlparser.statement.select;
 
-public interface OrderByVisitor {
+public interface OrderByVisitor<R,C> {
 
-	void visit(OrderByElement orderBy);
+	R visit(OrderByElement orderBy,C context);
 }

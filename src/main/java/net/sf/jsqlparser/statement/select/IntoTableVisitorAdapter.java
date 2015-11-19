@@ -23,9 +23,9 @@ package net.sf.jsqlparser.statement.select;
 
 import net.sf.jsqlparser.schema.Table;
 
-public class IntoTableVisitorAdapter implements IntoTableVisitor {
+public class IntoTableVisitorAdapter<R,C> implements IntoTableVisitor<R,C> {
     @Override
-    public void visit(Table tableName) {
-
+    public R visit(Table tableName,C context) {
+        return null;
     }
 }

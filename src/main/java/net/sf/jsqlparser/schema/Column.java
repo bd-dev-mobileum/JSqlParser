@@ -76,8 +76,8 @@ public final class Column implements Expression, MultiPartName {
     }
 
     @Override
-    public void accept(ExpressionVisitor expressionVisitor) {
-        expressionVisitor.visit(this);
+    public <R, C> R accept(ExpressionVisitor<R, C> expressionVisitor,C context) {
+        return expressionVisitor.visit(this,context);
     }
 
     @Override

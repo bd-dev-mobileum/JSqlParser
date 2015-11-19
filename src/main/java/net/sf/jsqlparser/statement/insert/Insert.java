@@ -50,8 +50,8 @@ public class Insert implements Statement {
     private List<SelectExpressionItem> returningExpressionList = null;
 
     @Override
-    public void accept(StatementVisitor statementVisitor) {
-        statementVisitor.visit(this);
+    public <R,C> R accept(StatementVisitor<R,C> statementVisitor,C context) {
+        return statementVisitor.visit(this,context);
     }
 
     public Table getTable() {

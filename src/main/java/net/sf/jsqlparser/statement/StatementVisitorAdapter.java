@@ -34,69 +34,69 @@ import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.truncate.Truncate;
 import net.sf.jsqlparser.statement.update.Update;
 
-public class StatementVisitorAdapter implements StatementVisitor {
+public class StatementVisitorAdapter<R,C> implements StatementVisitor<R,C> {
     @Override
-    public void visit(Select select) {
-
+    public R visit(Select select,C context) {
+        return null;
     }
 
     @Override
-    public void visit(Delete delete) {
-
+    public R visit(Delete delete,C context) {
+        return null;
     }
 
     @Override
-    public void visit(Update update) {
-
+    public R visit(Update update,C context) {
+        return null;
     }
 
     @Override
-    public void visit(Insert insert) {
-
+    public R visit(Insert insert,C context) {
+        return null;
     }
 
     @Override
-    public void visit(Replace replace) {
-
+    public R visit(Replace replace,C context) {
+        return null;
     }
 
     @Override
-    public void visit(Drop drop) {
-
+    public R visit(Drop drop,C context) {
+        return null;
     }
 
     @Override
-    public void visit(Truncate truncate) {
-
+    public R visit(Truncate truncate,C context) {
+        return null;
     }
 
     @Override
-    public void visit(CreateIndex createIndex) {
-
+    public R visit(CreateIndex createIndex,C context) {
+        return null;
     }
 
     @Override
-    public void visit(CreateTable createTable) {
-
+    public R visit(CreateTable createTable,C context) {
+        return null;
     }
 
     @Override
-    public void visit(CreateView createView) {
-
+    public R visit(CreateView createView,C context) {
+        return null;
     }
 
     @Override
-    public void visit(Alter alter) {
-
+    public R visit(Alter alter,C context) {
+        return null;
     }
 
     @Override
-    public void visit(Statements stmts) {
-
+    public R visit(Statements stmts,C context) {
+        return null;
     }
 
     @Override
-    public void visit(Execute execute) {
-        
+    public R visit(Execute execute,C context) {
+        return null;
     }
 }

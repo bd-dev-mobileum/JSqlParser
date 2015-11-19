@@ -23,11 +23,13 @@ package net.sf.jsqlparser.statement.select;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Table;
 
 import java.util.Iterator;
 import java.util.List;
+
 import net.sf.jsqlparser.expression.OracleHierarchicalExpression;
 
 /**
@@ -116,8 +118,8 @@ public class PlainSelect implements SelectBody {
     }
 
     @Override
-    public void accept(SelectVisitor selectVisitor) {
-        selectVisitor.visit(this);
+    public <R, C> R accept(SelectVisitor<R,C> selectVisitor,C context){
+        return selectVisitor.visit(this,context);
     }
 
     public List<OrderByElement> getOrderByElements() {

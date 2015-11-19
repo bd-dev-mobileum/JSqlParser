@@ -50,7 +50,7 @@ public class ConnectExpressionsVisitorTest {
 				return new Concat();
 			}
 		};
-		select.getSelectBody().accept(instance);
+		select.getSelectBody().accept(instance,null);
 
 		assertEquals("SELECT a || b || c AS expr FROM test", select.toString());
 	}
@@ -65,7 +65,7 @@ public class ConnectExpressionsVisitorTest {
 				return new Addition();
 			}
 		};
-		select.getSelectBody().accept(instance);
+		select.getSelectBody().accept(instance,null);
 
 		assertEquals("SELECT a + b + c AS testexpr FROM test", select.toString());
 	}

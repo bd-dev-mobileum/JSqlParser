@@ -40,7 +40,7 @@ import java.util.List;
 /**
  * Find all used tables within an select statement.
  */
-public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, ExpressionVisitor, ItemsListVisitor, SelectItemVisitor {
+public class TablesNamesFinder implements SelectVisitor<Void,Void>, FromItemVisitor<Void,Void>, ExpressionVisitor<Void,Void>, ItemsListVisitor<Void,Void>, SelectItemVisitor<Void,Void> {
 
     private List<String> tables;
     /**
@@ -60,7 +60,7 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
         init();
         tables.add(delete.getTable().getName());
         if (delete.getWhere() != null) {
-            delete.getWhere().accept(this);
+            delete.getWhere().accept(this,null);
         }
 
         return tables;
@@ -76,7 +76,7 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
         init();
         tables.add(insert.getTable().getName());
         if (insert.getItemsList() != null) {
-            insert.getItemsList().accept(this);
+            insert.getItemsList().accept(this,null);
         }
 
         return tables;
@@ -93,11 +93,11 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
         tables.add(replace.getTable().getName());
         if (replace.getExpressions() != null) {
             for (Expression expression : replace.getExpressions()) {
-                expression.accept(this);
+                expression.accept(this,null);
             }
         }
         if (replace.getItemsList() != null) {
-            replace.getItemsList().accept(this);
+            replace.getItemsList().accept(this,null);
         }
 
         return tables;
@@ -113,10 +113,10 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
         init();
         if (select.getWithItemsList() != null) {
             for (WithItem withItem : select.getWithItemsList()) {
-                withItem.accept(this);
+                withItem.accept(this,null);
             }
         }
-        select.getSelectBody().accept(this);
+        select.getSelectBody().accept(this,null);
 
         return tables;
     }
@@ -134,218 +134,228 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
         }
         if (update.getExpressions() != null) {
             for (Expression expression : update.getExpressions()) {
-                expression.accept(this);
+                expression.accept(this,null);
             }
         }
 
         if (update.getFromItem() != null) {
-            update.getFromItem().accept(this);
+            update.getFromItem().accept(this,null);
         }
 
         if (update.getJoins() != null) {
             for (Join join : update.getJoins()) {
-                join.getRightItem().accept(this);
+                join.getRightItem().accept(this,null);
             }
         }
 
         if (update.getWhere() != null) {
-            update.getWhere().accept(this);
+            update.getWhere().accept(this,null);
         }
 
         return tables;
     }
 
     @Override
-    public void visit(WithItem withItem) {
+    public Void visit(WithItem withItem,Void v) {
         otherItemNames.add(withItem.getName().toLowerCase());
-        withItem.getSelectBody().accept(this);
+        return withItem.getSelectBody().accept(this,v);
     }
 
     @Override
-    public void visit(PlainSelect plainSelect) {
+    public Void visit(PlainSelect plainSelect,Void v) {
         if (plainSelect.getSelectItems() != null) {
             for (SelectItem item : plainSelect.getSelectItems()) {
-                item.accept(this);
+                item.accept(this,null);
             }
         }
 
-        plainSelect.getFromItem().accept(this);
+        plainSelect.getFromItem().accept(this,null);
 
         if (plainSelect.getJoins() != null) {
             for (Join join : plainSelect.getJoins()) {
-                join.getRightItem().accept(this);
+                join.getRightItem().accept(this,null);
             }
         }
         if (plainSelect.getWhere() != null) {
-            plainSelect.getWhere().accept(this);
+            plainSelect.getWhere().accept(this,null);
         }
         if (plainSelect.getOracleHierarchical() != null) {
-            plainSelect.getOracleHierarchical().accept(this);
+            plainSelect.getOracleHierarchical().accept(this,null);
         }
+        return null;
     }
 
     @Override
-    public void visit(Table tableName) {
+    public Void visit(Table tableName,Void v) {
         String tableWholeName = tableName.getFullyQualifiedName();
         if (!otherItemNames.contains(tableWholeName.toLowerCase())
                 && !tables.contains(tableWholeName)) {
             tables.add(tableWholeName);
         }
+        return null;
     }
 
     @Override
-    public void visit(SubSelect subSelect) {
-        subSelect.getSelectBody().accept(this);
+    public Void visit(SubSelect subSelect,Void v) {
+        return subSelect.getSelectBody().accept(this,null);
     }
 
     @Override
-    public void visit(Addition addition) {
-        visitBinaryExpression(addition);
+    public Void visit(Addition addition,Void v) {
+        return visitBinaryExpression(addition,v);
     }
 
     @Override
-    public void visit(AndExpression andExpression) {
-        visitBinaryExpression(andExpression);
+    public Void visit(AndExpression andExpression,Void v) {
+        return visitBinaryExpression(andExpression, v);
     }
 
     @Override
-    public void visit(Between between) {
-        between.getLeftExpression().accept(this);
-        between.getBetweenExpressionStart().accept(this);
-        between.getBetweenExpressionEnd().accept(this);
+    public Void visit(Between between,Void v) {
+        between.getLeftExpression().accept(this,null);
+        between.getBetweenExpressionStart().accept(this,null);
+        between.getBetweenExpressionEnd().accept(this,null);
+        return null;
     }
 
     @Override
-    public void visit(Column tableColumn) {
+    public Void visit(Column tableColumn,Void v) {
+        return null;
     }
 
     @Override
-    public void visit(Division division) {
-        visitBinaryExpression(division);
+    public Void visit(Division division,Void v) {
+        visitBinaryExpression(division, v);
+        return null;
     }
 
     @Override
-    public void visit(DoubleValue doubleValue) {
+    public Void visit(DoubleValue doubleValue,Void v) {
+        return null;
     }
 
     @Override
-    public void visit(EqualsTo equalsTo) {
-        visitBinaryExpression(equalsTo);
+    public Void visit(EqualsTo equalsTo,Void v) {
+        return visitBinaryExpression(equalsTo, v);
     }
 
     @Override
-    public void visit(Function function) {
+    public Void visit(Function function,Void v) {
+        return null;
     }
 
     @Override
-    public void visit(GreaterThan greaterThan) {
-        visitBinaryExpression(greaterThan);
+    public Void visit(GreaterThan greaterThan,Void v) {
+        return visitBinaryExpression(greaterThan,v);
     }
 
     @Override
-    public void visit(GreaterThanEquals greaterThanEquals) {
-        visitBinaryExpression(greaterThanEquals);
+    public Void visit(GreaterThanEquals greaterThanEquals,Void v) {
+        return visitBinaryExpression(greaterThanEquals,v);
     }
 
     @Override
-    public void visit(InExpression inExpression) {
-        inExpression.getLeftExpression().accept(this);
-        inExpression.getRightItemsList().accept(this);
+    public Void visit(InExpression inExpression,Void v) {
+        inExpression.getLeftExpression().accept(this,null);
+        inExpression.getRightItemsList().accept(this,null);
+        return null;
     }
 
     @Override
-    public void visit(SignedExpression signedExpression) {
-        signedExpression.getExpression().accept(this);
+    public Void visit(SignedExpression signedExpression,Void v) {
+        return signedExpression.getExpression().accept(this,null);
     }
 
     @Override
-    public void visit(IsNullExpression isNullExpression) {
+    public Void visit(IsNullExpression isNullExpression,Void v) { return null;
     }
 
     @Override
-    public void visit(JdbcParameter jdbcParameter) {
+    public Void visit(JdbcParameter jdbcParameter,Void v) { return null;
     }
 
     @Override
-    public void visit(LikeExpression likeExpression) {
-        visitBinaryExpression(likeExpression);
+    public Void visit(LikeExpression likeExpression,Void v) { return 
+        visitBinaryExpression(likeExpression,v);
     }
 
     @Override
-    public void visit(ExistsExpression existsExpression) {
-        existsExpression.getRightExpression().accept(this);
+    public Void visit(ExistsExpression existsExpression,Void v) { return 
+        existsExpression.getRightExpression().accept(this,null);
     }
 
     @Override
-    public void visit(LongValue longValue) {
+    public Void visit(LongValue longValue,Void v) { return null;
     }
 
     @Override
-    public void visit(MinorThan minorThan) {
-        visitBinaryExpression(minorThan);
+    public Void visit(MinorThan minorThan,Void v) { return 
+        visitBinaryExpression(minorThan,v);
     }
 
     @Override
-    public void visit(MinorThanEquals minorThanEquals) {
-        visitBinaryExpression(minorThanEquals);
+    public Void visit(MinorThanEquals minorThanEquals,Void v) { return 
+        visitBinaryExpression(minorThanEquals,v);
     }
 
     @Override
-    public void visit(Multiplication multiplication) {
-        visitBinaryExpression(multiplication);
+    public Void visit(Multiplication multiplication,Void v) { return 
+        visitBinaryExpression(multiplication,v);
     }
 
     @Override
-    public void visit(NotEqualsTo notEqualsTo) {
-        visitBinaryExpression(notEqualsTo);
+    public Void visit(NotEqualsTo notEqualsTo,Void v) { return
+        visitBinaryExpression(notEqualsTo,v);
     }
 
     @Override
-    public void visit(NullValue nullValue) {
+    public Void visit(NullValue nullValue,Void v) { return null;
     }
 
     @Override
-    public void visit(OrExpression orExpression) {
-        visitBinaryExpression(orExpression);
+    public Void visit(OrExpression orExpression,Void v) { 
+        return 
+        visitBinaryExpression(orExpression,v);
     }
 
     @Override
-    public void visit(Parenthesis parenthesis) {
-        parenthesis.getExpression().accept(this);
+    public Void visit(Parenthesis parenthesis,Void v) { return 
+        parenthesis.getExpression().accept(this,null);
     }
 
     @Override
-    public void visit(StringValue stringValue) {
+    public Void visit(StringValue stringValue,Void v) { return null;
     }
 
     @Override
-    public void visit(Subtraction subtraction) {
-        visitBinaryExpression(subtraction);
+    public Void visit(Subtraction subtraction,Void v) { return 
+        visitBinaryExpression(subtraction,v);
     }
 
-    public void visitBinaryExpression(BinaryExpression binaryExpression) {
-        binaryExpression.getLeftExpression().accept(this);
-        binaryExpression.getRightExpression().accept(this);
+    public Void visitBinaryExpression(BinaryExpression binaryExpression,Void v) { 
+        binaryExpression.getLeftExpression().accept(this,null);
+        binaryExpression.getRightExpression().accept(this,null);
+        return null;
     }
 
     @Override
-    public void visit(ExpressionList expressionList) {
+    public Void visit(ExpressionList expressionList,Void v) { 
         for (Expression expression : expressionList.getExpressions()) {
-            expression.accept(this);
+            expression.accept(this,null);
         }
-
+        return null;
     }
 
     @Override
-    public void visit(DateValue dateValue) {
+    public Void visit(DateValue dateValue,Void v) { return null;
     }
 
     @Override
-    public void visit(TimestampValue timestampValue) {
+    public Void visit(TimestampValue timestampValue,Void v) { return null;
     }
 
     @Override
-    public void visit(TimeValue timeValue) {
+    public Void visit(TimeValue timeValue,Void v) { return null;
     }
 
     /*
@@ -354,7 +364,7 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
      * @see net.sf.jsqlparser.expression.ExpressionVisitor#visit(net.sf.jsqlparser.expression.CaseExpression)
      */
     @Override
-    public void visit(CaseExpression caseExpression) {
+    public Void visit(CaseExpression caseExpression,Void v) { return null;
     }
 
     /*
@@ -363,90 +373,96 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
      * @see net.sf.jsqlparser.expression.ExpressionVisitor#visit(net.sf.jsqlparser.expression.WhenClause)
      */
     @Override
-    public void visit(WhenClause whenClause) {
+    public Void visit(WhenClause whenClause,Void v) { return null;
     }
 
     @Override
-    public void visit(AllComparisonExpression allComparisonExpression) {
-        allComparisonExpression.getSubSelect().getSelectBody().accept(this);
+    public Void visit(AllComparisonExpression allComparisonExpression,Void v) { 
+        allComparisonExpression.getSubSelect().getSelectBody().accept(this,null);
+        return null;
     }
 
     @Override
-    public void visit(AnyComparisonExpression anyComparisonExpression) {
-        anyComparisonExpression.getSubSelect().getSelectBody().accept(this);
+    public Void visit(AnyComparisonExpression anyComparisonExpression,Void v) { 
+        anyComparisonExpression.getSubSelect().getSelectBody().accept(this,null);
+        return null;
     }
 
     @Override
-    public void visit(SubJoin subjoin) {
-        subjoin.getLeft().accept(this);
-        subjoin.getJoin().getRightItem().accept(this);
+    public Void visit(SubJoin subjoin,Void v) { 
+        subjoin.getLeft().accept(this,null);
+        subjoin.getJoin().getRightItem().accept(this,null);
+        return null;
     }
 
     @Override
-    public void visit(Concat concat) {
-        visitBinaryExpression(concat);
+    public Void visit(Concat concat,Void v) { 
+        visitBinaryExpression(concat,v);
+        return null;
     }
 
     @Override
-    public void visit(Matches matches) {
-        visitBinaryExpression(matches);
+    public Void visit(Matches matches,Void v) { 
+        visitBinaryExpression(matches,v);
+        return null;
     }
 
     @Override
-    public void visit(BitwiseAnd bitwiseAnd) {
-        visitBinaryExpression(bitwiseAnd);
-    }
+    public Void visit(BitwiseAnd bitwiseAnd,Void v) { 
+        visitBinaryExpression(bitwiseAnd,v);
+    return null;}
 
     @Override
-    public void visit(BitwiseOr bitwiseOr) {
-        visitBinaryExpression(bitwiseOr);
-    }
+    public Void visit(BitwiseOr bitwiseOr,Void v) { 
+        visitBinaryExpression(bitwiseOr,v);
+    return null;}
 
     @Override
-    public void visit(BitwiseXor bitwiseXor) {
-        visitBinaryExpression(bitwiseXor);
-    }
+    public Void visit(BitwiseXor bitwiseXor,Void v) { 
+        visitBinaryExpression(bitwiseXor,v);
+    return null;}
 
     @Override
-    public void visit(CastExpression cast) {
-        cast.getLeftExpression().accept(this);
-    }
+    public Void visit(CastExpression cast,Void v) { 
+        cast.getLeftExpression().accept(this,null);
+    return null;}
 
     @Override
-    public void visit(Modulo modulo) {
-        visitBinaryExpression(modulo);
-    }
+    public Void visit(Modulo modulo,Void v) { 
+        visitBinaryExpression(modulo,v);
+    return null;}
 
     @Override
-    public void visit(AnalyticExpression analytic) {
-    }
+    public Void visit(AnalyticExpression analytic,Void v) { 
+    return null;}
 
     @Override
-    public void visit(SetOperationList list) {
+    public Void visit(SetOperationList list,Void v) { 
         for (PlainSelect plainSelect : list.getPlainSelects()) {
-            visit(plainSelect);
+            visit(plainSelect,v);
         }
+    return null;}
+
+    @Override
+    public Void visit(ExtractExpression eexpr,Void v) { 
+        return null;
     }
 
     @Override
-    public void visit(ExtractExpression eexpr) {
+    public Void visit(LateralSubSelect lateralSubSelect,Void v) { 
+        return lateralSubSelect.getSubSelect().getSelectBody().accept(this,null);
     }
 
     @Override
-    public void visit(LateralSubSelect lateralSubSelect) {
-        lateralSubSelect.getSubSelect().getSelectBody().accept(this);
-    }
-
-    @Override
-    public void visit(MultiExpressionList multiExprList) {
+    public Void visit(MultiExpressionList multiExprList,Void v) { 
         for (ExpressionList exprList : multiExprList.getExprList()) {
-            exprList.accept(this);
+            exprList.accept(this,null);
         }
-    }
+    return null;}
 
     @Override
-    public void visit(ValuesList valuesList) {
-    }
+    public Void visit(ValuesList valuesList,Void v) { 
+    return null;}
 
     private void init() {
         otherItemNames = new ArrayList<String>();
@@ -454,56 +470,67 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
     }
 
     @Override
-    public void visit(IntervalExpression iexpr) {
+    public Void visit(IntervalExpression iexpr,Void v) { 
+        return null;
     }
 
     @Override
-    public void visit(JdbcNamedParameter jdbcNamedParameter) {
+    public Void visit(JdbcNamedParameter jdbcNamedParameter,Void v) { 
+        return null;
     }
 
     @Override
-    public void visit(OracleHierarchicalExpression oexpr) {
+    public Void visit(OracleHierarchicalExpression oexpr,Void v) { 
         if (oexpr.getStartExpression() != null) {
-            oexpr.getStartExpression().accept(this);
+            oexpr.getStartExpression().accept(this,null);
         }
 
         if (oexpr.getConnectExpression() != null) {
-            oexpr.getConnectExpression().accept(this);
+            oexpr.getConnectExpression().accept(this,null);
         }
+    return null;}
+
+    @Override
+    public Void visit(RegExpMatchOperator rexpr,Void v) { 
+        visitBinaryExpression(rexpr,v);
+    return null;}
+
+    @Override
+    public Void visit(RegExpMySQLOperator rexpr,Void v) { 
+        visitBinaryExpression(rexpr,v);
+    return null;}
+
+    @Override
+    public Void visit(JsonExpression jsonExpr,Void v) { 
+    return null;}
+
+    @Override
+    public Void visit(AllColumns allColumns,Void v) { 
+    return null;}
+
+    @Override
+    public Void visit(AllTableColumns allTableColumns,Void v) { 
+    return null;}
+
+    @Override
+    public Void visit(SelectExpressionItem item,Void v) { 
+        item.getExpression().accept(this,null);
+    return null;}
+
+	@Override
+	public Void visit(RangeOperators rangeOperators,Void v) { 
+        visitBinaryExpression(rangeOperators,v);
+	return null;}
+
+    @Override
+    public Void visit(BooleanValue nullValue, Void context)
+    {
+        return null;
     }
 
     @Override
-    public void visit(RegExpMatchOperator rexpr) {
-        visitBinaryExpression(rexpr);
-    }
-
-    @Override
-    public void visit(RegExpMySQLOperator rexpr) {
-        visitBinaryExpression(rexpr);
-    }
-
-    @Override
-    public void visit(JsonExpression jsonExpr) {
-    }
-
-    @Override
-    public void visit(AllColumns allColumns) {
-    }
-
-    @Override
-    public void visit(AllTableColumns allTableColumns) {
-    }
-
-    @Override
-    public void visit(SelectExpressionItem item) {
-        item.getExpression().accept(this);
-    }
-
-    @Override
-    public void visit(WithinGroupExpression wgexpr) {
-    }
-
-    @Override
-    public void visit(UserVariable var) {
+    public Void visit(ObjectValue booleanValue, Void context)
+    {
+        return null;
     }
 }

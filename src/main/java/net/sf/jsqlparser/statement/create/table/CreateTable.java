@@ -42,11 +42,10 @@ public class CreateTable implements Statement {
     private List<ColumnDefinition> columnDefinitions;
     private List<Index> indexes;
     private Select select;
-    private boolean ifNotExists = false;
 
     @Override
-    public void accept(StatementVisitor statementVisitor) {
-        statementVisitor.visit(this);
+    public <R,C> R accept(StatementVisitor<R,C> statementVisitor,C context) {
+        return statementVisitor.visit(this,context);
     }
 
     /**
@@ -122,14 +121,6 @@ public class CreateTable implements Statement {
         this.select = select;
     }
 
-    public boolean isIfNotExists() {
-        return ifNotExists;
-    }
-
-    public void setIfNotExists(boolean ifNotExists) {
-        this.ifNotExists = ifNotExists;
-    }
-
     @Override
     public String toString() {
         String sql = "";
@@ -137,7 +128,7 @@ public class CreateTable implements Statement {
 
         sql = "CREATE " + (unlogged ? "UNLOGGED " : "") + 
                 (!"".equals(createOps)?createOps + " ":"") +
-                "TABLE " + (ifNotExists?"IF NOT EXISTS ":"") + table;
+                "TABLE " + table;
 
         if (select != null) {
             sql += " AS " + select.toString();

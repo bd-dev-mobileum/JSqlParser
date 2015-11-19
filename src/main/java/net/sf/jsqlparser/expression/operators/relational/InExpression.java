@@ -87,8 +87,8 @@ public class InExpression implements Expression, SupportsOldOracleJoinSyntax {
 	}
 
 	@Override
-	public void accept(ExpressionVisitor expressionVisitor) {
-		expressionVisitor.visit(this);
+	public <R, C> R accept(ExpressionVisitor<R, C> expressionVisitor,C context) {
+		return expressionVisitor.visit(this,context);
 	}
 
     private String getLeftExpressionString() {

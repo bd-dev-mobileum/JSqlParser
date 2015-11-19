@@ -34,31 +34,31 @@ import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.truncate.Truncate;
 import net.sf.jsqlparser.statement.update.Update;
 
-public interface StatementVisitor {
+public interface StatementVisitor<R,C> {
 
-	void visit(Select select);
+	R visit(Select select,C context);
 
-	void visit(Delete delete);
+	R visit(Delete delete,C context);
 
-	void visit(Update update);
+	R visit(Update update,C context);
 
-	void visit(Insert insert);
+	R visit(Insert insert,C context);
 
-	void visit(Replace replace);
+	R visit(Replace replace,C context);
 
-	void visit(Drop drop);
+	R visit(Drop drop,C context);
 
-	void visit(Truncate truncate);
+	R visit(Truncate truncate,C context);
 
-	void visit(CreateIndex createIndex);
+	R visit(CreateIndex createIndex,C context);
 
-	void visit(CreateTable createTable);
+	R visit(CreateTable createTable,C context);
 
-	void visit(CreateView createView);
+	R visit(CreateView createView,C context);
 	
-	void visit(Alter alter);
+	R visit(Alter alter,C context);
     
-    void visit(Statements stmts);
+    R visit(Statements stmts,C context);
     
-    void visit(Execute execute);
+    R visit(Execute execute,C context);
 }

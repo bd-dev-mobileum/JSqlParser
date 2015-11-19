@@ -23,7 +23,7 @@ package net.sf.jsqlparser.statement.select;
 
 import net.sf.jsqlparser.schema.Table;
 
-public interface IntoTableVisitor {
+public interface IntoTableVisitor<R,C> {
 
-	void visit(Table tableName);
+	R visit(Table tableName,C context);
 }

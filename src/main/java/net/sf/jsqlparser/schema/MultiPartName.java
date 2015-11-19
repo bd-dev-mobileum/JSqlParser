@@ -21,6 +21,8 @@
  */
 package net.sf.jsqlparser.schema;
 
-public interface MultiPartName {
+import java.io.Serializable;
+
+public interface MultiPartName extends Serializable{
     String getFullyQualifiedName();
 }

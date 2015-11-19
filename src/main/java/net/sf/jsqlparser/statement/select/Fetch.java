@@ -21,10 +21,12 @@
  */
 package net.sf.jsqlparser.statement.select;
 
+import java.io.Serializable;
+
 /**
  * A fetch clause in the form FETCH (FIRST | NEXT) row_count (ROW | ROWS) ONLY
  */
-public class Fetch {
+public class Fetch implements Serializable{
 
 	private long rowCount;
 	private boolean fetchJdbcParameter = false;

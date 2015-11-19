@@ -21,10 +21,11 @@
  */
 package net.sf.jsqlparser.statement;
 
+
 /**
  * An operation on the db (SELECT, UPDATE ecc.)
  */
 public interface Statement {
 
-	void accept(StatementVisitor statementVisitor);
+    <R, C> R accept(StatementVisitor<R,C> statementVisitor,C context);
 }

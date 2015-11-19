@@ -49,8 +49,8 @@ public class ExpressionList implements ItemsList {
 	}
 
 	@Override
-	public void accept(ItemsListVisitor itemsListVisitor) {
-		itemsListVisitor.visit(this);
+	public <R, C> R accept(ItemsListVisitor<R,C> itemsListVisitor,C context){
+		return itemsListVisitor.visit(this,context);
 	}
 
 	@Override

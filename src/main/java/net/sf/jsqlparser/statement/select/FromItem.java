@@ -21,15 +21,17 @@
  */
 package net.sf.jsqlparser.statement.select;
 
+import java.io.Serializable;
+
 import net.sf.jsqlparser.expression.Alias;
 
 /**
  * An item in a "SELECT [...] FROM item1" statement. (for example a table or a
  * sub-select)
  */
-public interface FromItem {
+public interface FromItem extends Serializable{
 
-	void accept(FromItemVisitor fromItemVisitor);
+	<R,C> R accept(FromItemVisitor<R,C> fromItemVisitor,C context);
 
 	Alias getAlias();
 

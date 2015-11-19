@@ -114,12 +114,12 @@ public class Table implements FromItem, MultiPartName {
     }
 
     @Override
-    public void accept(FromItemVisitor fromItemVisitor) {
-        fromItemVisitor.visit(this);
+    public <R,C> R accept(FromItemVisitor<R,C> fromItemVisitor,C context){
+        return fromItemVisitor.visit(this,context);
     }
 
-    public void accept(IntoTableVisitor intoTableVisitor) {
-        intoTableVisitor.visit(this);
+    public <R,C> R accept(IntoTableVisitor<R,C> intoTableVisitor,C context) {
+        return intoTableVisitor.visit(this,context);
     }
 
     @Override

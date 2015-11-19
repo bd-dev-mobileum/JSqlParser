@@ -23,29 +23,29 @@ package net.sf.jsqlparser.statement.select;
 
 import net.sf.jsqlparser.schema.Table;
 
-public class FromItemVisitorAdapter implements FromItemVisitor{
+public class FromItemVisitorAdapter<R,C> implements FromItemVisitor<R,C>{
     @Override
-    public void visit(Table table) {
-
+    public R visit(Table table,C context) {
+        return null;
     }
 
     @Override
-    public void visit(SubSelect subSelect) {
-
+    public R visit(SubSelect subSelect,C context) {
+        return null;
     }
 
     @Override
-    public void visit(SubJoin subjoin) {
-
+    public R visit(SubJoin subjoin,C context) {
+        return null;
     }
 
     @Override
-    public void visit(LateralSubSelect lateralSubSelect) {
-
+    public R visit(LateralSubSelect lateralSubSelect,C context) {
+        return null;
     }
 
     @Override
-    public void visit(ValuesList valuesList) {
-
+    public R visit(ValuesList valuesList,C context) {
+        return null;
     }
 }

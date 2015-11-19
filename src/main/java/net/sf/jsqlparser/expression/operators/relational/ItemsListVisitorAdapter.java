@@ -23,21 +23,27 @@ package net.sf.jsqlparser.expression.operators.relational;
 
 import net.sf.jsqlparser.statement.select.SubSelect;
 
-public class ItemsListVisitorAdapter implements ItemsListVisitor{
+public class ItemsListVisitorAdapter<R, C>
+        implements ItemsListVisitor<R, C>
+{
     @Override
-    public void visit(SubSelect subSelect) {
-
+    public R visit(SubSelect subSelect, C context)
+    {
+        return null;
     }
 
     @Override
-    public void visit(ExpressionList expressionList) {
-
+    public R visit(ExpressionList expressionList, C context)
+    {
+        return null;
     }
 
     @Override
-    public void visit(MultiExpressionList multiExprList) {
+    public R visit(MultiExpressionList multiExprList, C context)
+    {
         for (ExpressionList list : multiExprList.getExprList()) {
-            visit(list);
+            visit(list,context);
         }
+        return null;
     }
 }

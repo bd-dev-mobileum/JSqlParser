@@ -61,7 +61,7 @@ public class TestUtils {
                 buildSqlString(parsed.toString(), laxDeparsingCheck));
 
         StatementDeParser deParser = new StatementDeParser(new StringBuilder());
-        parsed.accept(deParser);
+        parsed.accept(deParser,null);
         assertEquals(buildSqlString(statement, laxDeparsingCheck), 
                 buildSqlString(deParser.getBuffer().toString(), laxDeparsingCheck));
     }
@@ -86,7 +86,7 @@ public class TestUtils {
         expressionDeParser.setBuffer(stringBuilder);
         SelectDeParser selectDeParser = new SelectDeParser(expressionDeParser, stringBuilder);
         expressionDeParser.setSelectVisitor(selectDeParser);
-        parsed.accept(expressionDeParser);
+        parsed.accept(expressionDeParser,null);
 
         assertEquals(expression, stringBuilder.toString());
     }

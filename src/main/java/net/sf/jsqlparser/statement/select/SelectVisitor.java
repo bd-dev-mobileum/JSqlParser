@@ -21,11 +21,11 @@
  */
 package net.sf.jsqlparser.statement.select;
 
-public interface SelectVisitor {
+public interface SelectVisitor<R,C> {
 
-	void visit(PlainSelect plainSelect);
+	R visit(PlainSelect plainSelect,C context);
 
-	void visit(SetOperationList setOpList);
+	R visit(SetOperationList setOpList,C context);
 
-	void visit(WithItem withItem);
+	R visit(WithItem withItem,C context);
 }
